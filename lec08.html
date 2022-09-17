@@ -1,0 +1,404 @@
+<HTML>
+
+<!-- Mirrored from www.cse.iitk.ac.in/users/dheeraj/cs425/lec08.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 17 Sep 2022 16:16:24 GMT -->
+<HEAD>
+<TITLE>
+ Computer Networks: Lecture 08
+</TITLE>
+</HEAD>
+<a NAME="top"></A>
+<BODY TEXT="BLACK" BGCOLOR="#ffffff">
+<center>
+<h1>Computer Networks </h1>
+</center>
+
+<A HREF="lec07.html">Prev</a>|
+<A HREF="lec09.html">Next</A>|
+<A HREF="index-2.html">Index</A>
+
+<HR COLOR=black></HR>
+<center><h2>Token Ring Network (Contd...)</h2></center><p>
+<h3>
+<b>Phase Jitter Compensation :</b></h3>
+In a token ring the source starts discarding all it's previously transmitted
+bits as soon as they circumnavigate the ring and reach the source. Hence,
+it's not desirable that while a token is being sent some bits of the token
+which have already been sent become available at the incoming end of the
+source. This behavior though is desirable in case of data packets which
+ought to be drained from the ring once they have gone around the ring.
+To achieve the aforesaid behavior with respect to tokens, we would like
+the ring to hold at least 24 bits at a time. How do we ensure this?
+<p>Each node in a ring introduces a 1 bit delay. So, one approach might
+be to set the minimum limit on the number of nodes in a ring as 24. But,
+this is not a viable option. The actual solution is as follows.&nbsp; We
+have one node in the ring designated as <b>"monitor"</b>. The monitor maintains
+a 24 bits buffer with help of which it introduces a 24 bit delay. The catch
+here is what if the clocks of nodes following the source are faster than
+the source? In this case the 24 bit delay of the monitor would be less
+than the 24 bit delay desired by the host. To avoid this situation the
+monitor maintains 3 extra bits to compensate for the faster bits. The 3
+extra bits suffice even if bits are 10 % faster. This compensation is called
+Phase Jitter Compensation.
+
+<h3><b>Handling multiple priority frames</b></h3>
+Each node or packet has a priority level. We don't concern ourselves with
+how this priority is decided. The first 3 bits of the Access Control byte
+in the token are for priority and the last 3 are for reservation.
+<br>&nbsp;
+<table BORDER WIDTH="20%" >
+<tr>
+<td WIDTH="12%">&nbsp;P</td>
+
+<td WIDTH="12%">&nbsp;P</td>
+
+<td WIDTH="12%">&nbsp;P</td>
+
+<td WIDTH="12%">&nbsp;T</td>
+
+<td WIDTH="13%">M</td>
+
+<td WIDTH="13%">&nbsp;R</td>
+
+<td WIDTH="13%">&nbsp;R</td>
+
+<td WIDTH="13%">&nbsp;R</td>
+</tr>
+</table>
+
+<p>Initially the reservation bits are set to 000. When a node wants to
+transmit a priority n frame, it must wait until it can capture a token
+whose priority is less than or equal to n. Furthermore, when a data frame
+goes by, a station can try to reserve the next token by writing the priority
+of the frame it wants to send into the frame's Reservation bits. However,
+if a higher priority has already been reserved there, the station cannot
+make a reservation. When the current frame is finished, the next token
+is generated at the priority that has been reserved.
+<p>A slight problem with the above reservation procedure is that the reservation
+priority keeps on increasing. To solve this problem, the station raising
+the priority remembers the reservation priority that it replaces and when
+it is done it reduces the priority to the previous priority.
+<p>Note that in a token ring, low priority frames may starve.
+
+<h3><b>Ring Maintenance</b></h3>
+Each token ring has a monitor that oversees the ring. Among the monitor's
+responsibilities are seeing that the token is not lost, taking action when
+the ring breaks, cleaning the ring when garbled frames appear and watching
+out for orphan frames. An orphan frame occurs when a station transmits
+a short frame in it's entirety&nbsp; onto a long ring and then crashes
+or is powered down before the frame can be removed. If nothing is done,
+the frame circulates indefinitely.
+<ul>
+<li><p><b>Detection of orphan frames:</b> The monitor detects orphan frames by setting
+the monitor bit in the Access Control byte whenever it passes through.
+If an incoming frame has this bit set, something is wrong since the same
+frame has passed the monitor twice. Evidently it was not removed by the
+source, so the monitor drains it.
+<li><p><b>Lost Tokens:</b> The monitor has a timer that is set to the longest possible
+tokenless interval : when each node transmits for the full token holding
+time. If this timer goes off, the monitor drains the ring and issues a
+fresh token.
+<li><p><b>Garbled frames:</b> The monitor can detect such frames by their invalid
+format or checksum, drain the ring and issue a fresh token.
+</ul>
+<p>The token ring control frames for maintenance are:<br><br>
+<center><table BORDER WIDTH="77%" >
+<tr>
+<td WIDTH="14%">
+<center><i>Control field</i></center>
+</td>
+
+<td WIDTH="25%">
+<center><i>Name</i></center>
+</td>
+
+<td WIDTH="61%">
+<center><i>Meaning</i></center>
+</td>
+</tr>
+
+<tr>
+<td WIDTH="14%">&nbsp;00000000</td>
+
+<td WIDTH="25%">&nbsp;Duplicate address test</td>
+
+<td WIDTH="61%">&nbsp;Test if two stations have the same address</td>
+</tr>
+
+<tr>
+<td WIDTH="14%">&nbsp;00000010</td>
+
+<td WIDTH="25%">&nbsp;Beacon</td>
+
+<td WIDTH="61%">&nbsp;Used to locate breaks in the ring</td>
+</tr>
+
+<tr>
+<td WIDTH="14%">&nbsp;00000011</td>
+
+<td WIDTH="25%">&nbsp;Claim token</td>
+
+<td WIDTH="61%">&nbsp;Attempt to become monitor</td>
+</tr>
+
+<tr>
+<td WIDTH="14%">&nbsp;00000100</td>
+
+<td WIDTH="25%">&nbsp;Purge</td>
+
+<td WIDTH="61%">&nbsp;Reinitialize the ring</td>
+</tr>
+
+<tr>
+<td WIDTH="14%">&nbsp;00000101</td>
+
+<td WIDTH="25%">&nbsp;Active monitor present</td>
+
+<td WIDTH="61%">&nbsp;Issued periodically by the monitor</td>
+</tr>
+
+<tr>
+<td WIDTH="14%">&nbsp;00000110</td>
+
+<td WIDTH="25%">&nbsp;Standby monitor present</td>
+
+<td WIDTH="61%">&nbsp;Announces the presence of potential monitors</td>
+</tr>
+</table></center>
+<p>
+The monitor periodically issues a message "Active Monitor Present" informing
+all nodes of its presence. When this message is not received for a specific
+time interval, the nodes detect a monitor failure.
+Each node that believes it can function as a monitor broadcasts a "Standby
+Monitor Present" message at regular intervals, indicating that it is ready
+to take on the monitor's job.
+Any node that detects failure of a monitor issues a "Claim" token. There
+are 3 possible outcomes :
+<ol>
+<li>If the issuing node gets back its own claim token, then it becomes
+the monitor.
+<li>If a packet different from a claim token is received, apparently
+a wrong guess of monitor failure was made. In this case on receipt of our
+own claim token, we discard it. Note that our claim token may have been
+removed by some other node which has detected this error.
+<li>If some other node has also issued a claim token, then the node with
+the larger address becomes the monitor.
+</ol>
+In order to resolve errors of duplicate addresses, whenever a node comes
+up it sends a <b>"Duplicate Address Detection"</b> message (with the destination
+= source) across the network. If the address recognize bit has been
+set on receipt of the message, the issuing node realizes a duplicate address
+and goes to standby mode.
+A node informs other nodes of removal of a packet from the ring through
+a <b>"Purge"</b> message.
+One maintenance function that the monitor cannot handle is locating
+breaks in the ring. If there is no activity detected in the ring (e.g.
+Failure of monitor to issue the <b>Active Monitor Present</b> token...) , the
+usual procedures of sending a claim token are followed. If the claim token
+itself is not received besides packets of any other kind, the node then
+sends <b>"Beacons"</b> at regular intervals until a message is received indicating
+that the broken ring has been repaired.
+<br>
+
+<h3>
+<b>Other Ring Networks</b></h3>
+The problem with the token ring system is that large rings cause large
+delays. It must be made possible for multiple packets to be in the ring
+simultaneously. The following ring networks resolve this problem to some
+extent :-
+<p><b>Slotted Ring :</b>
+<p>In this system, the ring is slotted into a number of fixed size frames
+which are continuously moving around the ring. This makes it necessary
+that there be enough number of nodes (large ring size) to ensure that all
+the bits can stay on the ring at the same time. The frame header contains
+information as to whether the slots are empty or full. The usual disadvantages
+of overhead/wastage associated with fixed size frames are present.
+<center>
+<p><img SRC="fig.lec08/slottedr.gif"></center>
+
+<p><b>Register Insertion Rings :</b>
+<p>This is an improvement over slotted ring architecture. The network interface
+consists of two registers : a shift register and an output buffer.
+At startup, the input pointer points to the rightmost bit position
+in the input shift register .When a bit arrives it is in the rightmost
+empty position (the one indicated by the input pointer). After the node
+has detected that the frame is not addressed to it, the bits are
+transmitted one at time (by shifting). As new bits come in, they are inserted
+at&nbsp; the position indicated by the pointer and then the contents are
+shifted. Thus the pointer is not moved. Once the shift register has pushed out the last bit of a frame, it checks to see if it has an output frame waiting. In case yes, then it checks
+that if the number of empty slots in the shift register is at least equal
+to the number of bits in the output frame. After this the output connection
+is switched to this second register and after the register has emptied
+its contents, the output line is switched back to the shift register. Thus,
+no single node can hog the bandwidth. In a loaded system, a node can transmit a k-bit frame only if it has saved up a k-bits of inter frame gaps.
+<center>
+<p><img SRC="fig.lec08/registerin.gif"></center>
+
+<p>Two major disadvantages of this topology are complicated hardware and
+difficulty in the detection of start/end of packets.
+
+<h4>Contention Ring</h4>
+<p>The token ring has primarily two problems:</p>
+<ul> <li>On light loads, huge overhead is incurred for token passing. 
+<li>Nodes with low priority data may starve if there is always a node with high
+priority data. 
+</ul>
+A contention ring attempts to address these problems. In a contention ring, if there is no communication in the ring for a while, a sender node will send its data immediately, followed by a token. If the token comes back to the sender without any data packet in between, the sender removes it from the ring. However under heavy load the behavior is that of a normal token ring. In case a collision, each of the sending nodes will remove the others' data packet from the ring, back off for a random period of time and then resend their data.
+
+<center><h2>IEEE 802.4: Token Bus Network</h2></center>
+In this system, the nodes are physically connected as a bus, but logically form a ring with tokens passed around to determine the turns for sending. It has the robustness of the 802.3 broadcast cable and the known worst case behavior of a ring. The structure of a token bus network is as follows: 
+
+<br><br><center><img src="fig.lec08/bus1.gif"></center><p>
+
+<h3>Frame Structure</h3>
+<center><img src="fig.lec08/frame.gif"></center><p>
+
+<p>A 802.4 frame has the following fields:</p>
+<ul><li>Preamble:  The Preamble is used to synchronize the receiver's clock.<br> 
+<li>Starting Delimiter (SD) and End Delimiter (ED): The Starting Delimiter
+and Ending Delimiter fields are used to mark frame boundaries. Both of them
+contain analog encoding of symbols other than 1 or 0 so that they cannot occur
+accidentally in the user data. Hence no length field is needed. <br>
+<li>Frame Control (FC): This field is used to distinguish data frames from control frames. For data
+frames, it carries the frame's priority as well as a bit which the destination
+can set as an acknowledgement. For control frames, the Frame Control field is
+used to specify the frame type. The allowed types include token passing and
+various ring maintenance frames.<br>
+<li>Destination and Source Address: The Destination and Source address fields may
+be 2 bytes (for a local address) or 6 bytes (for a global address).<br>
+<li>Data: The Data
+field carries the actual data and it may be 8182 bytes when 2 byte addresses are used and 8174 bytes for 6 byte
+addresses.<br>
+<li>Checksum:  A 4-byte checksum calculated for the data. Used in error detection. </p>
+</ul>
+ 
+<h3>Ring Maintenance:</h3>
+<h4>Mechanism:</h4>
+<p>When the first node on the token bus comes up, it sends a <b>Claim_token</b> packet
+to initialize the ring. If more than one station send this packet at the same
+time, there is a collision. Collision is resolved by a contention mechanism, in
+which the contending nodes send random data for 1, 2, 3 and 4 units of time
+depending on the first two bits of their address. The node sending data for the
+longest time wins. If two nodes have the same first two bits in their addresses,
+then contention is done again based on the next two bits of their address and so
+on.</p>
+<p>After the ring is set up, new nodes which are powered up may wish to join the
+ring. For this a node sends <b>Solicit_successor_1</b> packets from time to time,
+inviting bids from new nodes to join the ring. This packet contains the address
+of the current node and its current successor, and asks for nodes in between
+these two addresses to reply. If more than one nodes respond, there will be collision.
+The node then sends a <b>Resolve_contention</b> packet, and the contention is resolved
+using a similar mechanism as described previously. Thus at a time only one node
+gets to enter the ring. The last node in the ring will send a<b>
+Solicit_successor_2</b> packet containing the addresses of it and its successor.
+This packet asks nodes not having addresses in between these two addresses to
+respond. </p>
+<p>A question arises that how frequently should a node send a Solicit_successor
+packet? If it is sent too frequently, then overhead will be too high. Again if
+it is sent too rarely, nodes will have to wait for a long time before joining
+the ring. If the channel is not busy, a node will send a Solicit_successor
+packet after a fixed number of token rotations. This number can be configured by
+the network administrator. However if there is heavy traffic in the network,
+then a node would defer the sending of bids for successors to join in.</p>
+<p>There may be problems in the logical ring due to sudden failure of a node.
+What happens when a node goes down along with the token? After passing the
+token, a node, say node A, listens to the channel to see if its successor either
+transmits the token or passes a frame. If neither happens, it resends a token.
+Still if nothing happens, A sends a <b>Who_follows</b> packet, containing the address
+of the down node. The successor of the down node, say node C, will now respond
+with a <b>Set_successor</b> packet, containing its own address. This causes A to set
+its successor node to C, and the logical ring is restored. However, if two
+successive nodes go down suddenly, the ring will be dead and will have to be
+built afresh, starting from a <b>Claim_token</b> packet.</p>
+<p>When a node wants to shutdown normally, it sends a <b>Set_successor</b> packet to
+its predecessor, naming its own successor. The ring then continues unbroken, and
+the node goes out of the ring.</p>
+<p>The various control frames used for ring maintenance are shown below:</p>
+<table border="1" width="100%">
+  <tr>
+    <td width="33%">
+      <h4>Frame Control Field</h4>
+    </td>
+    <td>
+      <h4>Name</h4>
+    </td>
+    <td>
+      <h4>Meaning</h4>
+    </td>
+  </tr>
+  <tr>
+    <td width="33%">00000000</td>
+    <td>Claim_token</td>
+    <td>Claim token during ring maintenance</td>
+  </tr>
+  <tr>
+    <td width="33%">00000001</td>
+    <td>Solicit_successor_1</td>
+    <td>Allow stations to enter the ring</td>
+  </tr>
+  <tr>
+    <td width="33%">00000010</td>
+    <td>Solicit_successor_2</td>
+    <td>Allow stations to enter the ring</td>
+  </tr>
+  <tr>
+    <td>00000011</td>
+    <td>Who_follows</td>
+    <td>Recover from lost token</td>
+  </tr>
+  <tr>
+    <td>00000100</td>
+    <td>Resolve_contention</td>
+    <td>Used when multiple stations want to enter</td>
+  </tr>
+  <tr>
+    <td>00001000</td>
+    <td>Token</td>
+    <td>Pass the token</td>
+  </tr>
+  <tr>
+    <td>00001100</td>
+    <td width="33%">Set_successor</td>
+    <td>Allow the stations leave the ring</td>
+  </tr>
+</table>
+<h3>Priority Scheme:</h3>
+<p>Token bus supports four distinct priority levels: 0, 2, 4 and 6.</p>
+<p>0 is the lowest priority level and 6 the highest. The following times are
+defined by the token bus:</p>
+<ul>
+<li>THT: Token Holding Time. A node holding the token can send priority 6 data
+for a maximum of this amount of time. 
+<li>TRT_4: Token Rotation Time for class 4 data. This is the maximum time a
+token can take to circulate and still allow transmission of class 4 data.</p>
+<li>TRT_2 and TRT_0: Similar to TRT_4. </ul>  
+<p>When a station receives data, it proceeds in the following manner:</p>
+<ul> <li>It transmits priority 6 data for at most THT time, or as long as it has
+data.
+<li>Now if the time for the token to come back to it is less than TRT_4, it
+will transmit priority 4 data, and for the amount of time allowed by TRT_4.
+Therefore the maximum time for which it can send priority 4 data is= Actual TRT
+- THT - TRT_4
+<li>Similarly for priority 2 and priority 0 data.</ul> 
+
+<p>This mechanism ensures that priority 6 data is always sent, making the system
+suitable for real time data transmission. In fact this was one of the primary
+aims in the design of token bus.
+
+
+
+<HR color=BLACK>
+<h3>Image References:</h3>
+<ul>
+<li>https://www.cis.strath.ac.uk/teaching/ug/classes/52.354/Images/SlottedRing.gif
+<li>http://www.lkn.ei.tum.de/lehre/mmprog/mac/protocols/token-bus/pics/bus1.gif
+<li>http://www.acerimmeronline.com/networks/images/token_bus_frame.gif
+</ul>
+<HR color=BLACK>
+<A HREF="#top">back to top</A><br>
+<A HREF="lec07.html">Prev</A>|&nbsp<A HREF="lec09.html">Next </A>|
+<A HREF="index-2.html">Index</A>
+</P>
+</BODY>
+
+<!-- Mirrored from www.cse.iitk.ac.in/users/dheeraj/cs425/lec08.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 17 Sep 2022 16:16:26 GMT -->
+</HTML>

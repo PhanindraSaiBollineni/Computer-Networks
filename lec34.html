@@ -1,0 +1,142 @@
+<html>
+
+<!-- Mirrored from www.cse.iitk.ac.in/users/dheeraj/cs425/lec34.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 17 Sep 2022 16:16:49 GMT -->
+<head>
+<title>
+Computer Networks : Lecture 34
+</title>
+</head>
+<body>
+<a NAME="top"></A>
+<body text = "BLACK" BGCOLOR="#ffffff">
+<center>
+<h1>Computer Networks</h1>
+</center>
+
+<A HREF="lec33.html">Prev</a>&nbsp;|
+<A HREF="lec35.html">Next</A>&nbsp;|
+<A HREF="index-2.html">Index</A>&nbsp;
+<HR COLOR=black></HR>
+
+<CENTER><h2>Network Security(Contd...)</h2></center>
+<h3>Key Exchange in Symmetric Key Schemes (contd.)</h3>
+
+<div align="left">
+    In this lecture we will look at key exchange in symmetric key schemes where 
+    public key encryption cannot be used. So the encryption using public and 
+    private keys is not possible. We will see that in this scenario how do we 
+    exchange the symmetric key. The two people who are communicating do not want 
+    others to understand what they are talking about. So they would use a 
+    language which others possibly do not understand. But they have to decide 
+    upon a common language. For this the language has to be encrypted in some 
+    key which will be somehow known to the other person.<p>Key exchange in 
+    symmetric key schemes is a tricky business because anyone snooping on the 
+    exchange can get hold of the key if we are not careful and since there is no 
+    public-private key arrangement here, he can obtain full control over the 
+    communication. There are various approaches to the foolproof exchange of 
+    keys in these schemes. We look at one approach which is as follows:-</p>
+    
+<h3>Diffie - Hellman Key Exchange</h3>
+    <p>A and B are two persons wishing to communicate. Both of them generate a 
+    random number each, say x and y respectively. There is a function f which 
+    has no inverse. Now A sends f(x) to B and B sends f(y) to A. So now A knows 
+    x and f(y) and B knows y and f(x). There is another function g such that g(x,&nbsp; 
+    f(y)) = g(y, f(x)). The key used by A is g(x, f(y)) and that used by B is 
+    g(y, f(x)). Both are actually same. The implementation of this approach is 
+    described below :</p>
+    <p align="center">
+    <img border="0" src="fig.lec34/31-diffie.gif" width="554" height="359"></p>
+    <ol>
+      <li>A has two large prime numbers <b>n </b>and <b>g</b>.<b> </b>There 
+      are other conditions also that these numbers must satisfy. 
+      <li>A sends <b>n, g and g<sup>x</sup> mod n </b>to B in a message. B 
+      evaluates (<b>g<sup>x</sup> mod n)<sup>y</sup> </b>to be used as the key.
+      <li>B sends <b>g<sup>y</sup> mod n </b>to A. A evaluates <b>(g<sup>y</sup> 
+      mod n)<sup>x</sup></b> to be used as the key. So now both parties have the 
+      common number <b>g<sup>xy</sup> mod n</b>. This is the symmetric (secret 
+      communication) key used by both A and B now.&nbsp; 
+</ol>    
+  This works because though the other people know <b>n, g,</b> <b>g<sup>x</sup> 
+      mod n, g<sup>y</sup> mod n </b>but still they cannot evaluate the key 
+      because they do not know either x or y.
+    
+<h4>Man in the Middle Attack</h4>
+    <p>However there is a security problem even then. Though this system cannot 
+    be broken but it can be bypassed. The situation which we are referring to is 
+    called the <b>man-in-the-middle attack</b>. We assume that there is a guy C 
+    in between A and B. C has the ability to capture packets and create new 
+    packets. When A sends <b>n, g and g<sup>x</sup> mod n, </b>&nbsp;C captures 
+    them and sends <b>n, g and g<sup>z</sup> mod n </b>to B. On receiving this B 
+    sends <b>n, g and g<sup>y</sup> mod n </b>but again C captures these and 
+    sends <b>n, g and g<sup>z</sup> mod n </b>to A. So A will use the key <b>(g<sup>z</sup> 
+    mod n)<sup>x </sup></b>&nbsp;and B will use the key <b>(g<sup>z</sup> mod n)<sup>y&nbsp;
+    </sup></b>. Both these keys are known to C and so when a packet comes from 
+    A, C decrypts it using A's key and encrypts it in it's own key and then 
+    sends it to B. Again when a packet comes from B, it does a similar thing 
+    before sending the packet to A. So effectively there are two keys - one 
+    operating between A and C and the other between C and B.</p>
+    <p align="center">
+    <img border="0" src="fig.lec34/31-diffie_bug.gif" width="596" height="354"></p>
+    
+      There must be some solution to this problem. The solution can be such 
+      so that we may not be able to communicate further ( because our keys are 
+      different ) but atleast we can prevent C from looking at the data. We have 
+      to do something so that C cannot encrypt or decrypt the data. We use a 
+      policy that A only sends half a packet at a time. C cannot decrypt half a 
+      packet and so it is stuck. A sends the other half only when it receives a 
+      half-packet from B. C has two options when it receives half a packet :
+      <ol>
+      <li>It does not send the packet to B at all and dumps it. In this case 
+      B will anyway come to know that there is some problem and so it will not 
+      send it's half-packet.
+      <li>It forwards the half-packet as it is to B. Now when B sends it's 
+      half-packet, A sends the remaining half. When B decrypts this entire 
+      packet it sees that the data is junk and so it comes to know that there is 
+      some problem in communication. 
+     </ol>
+      Here we have assumed that there is some application level 
+      understanding between&nbsp; A and B like the port number. If A sends a 
+      packet at port number 25 and receives a packet at port number 35, then it 
+      will come to know that there is some problem.
+      At the very least we have ensured that C cannot read the packets 
+      though it can block the communication. <p>There is another much simpler 
+      method of exchanging keys which we now discuss :
+      &nbsp;
+      <h3>Key Distribution Center</h3> 
+      There is a central trusted node called the Key Distribution Center ( 
+      KDC ). Every node has a key which is shared between it and the KDC. Since 
+      no one else knows A's secret key (<b>K<sub>A</sub></b>) KDC is sure that 
+      the message it received has come from A. We show the implementation 
+      through this diagram :
+      <dd>
+      <p align="center">
+      <img border="0" src="fig.lec34/31-kdc.gif" width="448" height="471"></dd>
+    
+    <p>When A wants to communicate with B, it sends a message encrypted in it's 
+    key to the KDC. The KDC then sends a common key to both A and B encrypted in 
+    their respective keys. A and B can communicate safely using this key.
+      There is a problem with this implementation also. It is prone to <b>
+      replay attack</b>. The messages are in encrypted form and hence would not 
+      make sense to an intruder but they may be replayed to the listener again 
+      and again with the listener believing that the messages are from the 
+      correct source. To prevent this, we can use:
+      <ul>
+      <li><b>Timestamps: </b>which however don't generally work because of the 
+      offset in time between machines. Synchronization over the network becomes 
+      a problem. </li>
+      <li><b>Nonce numbers: </b>which are like ticket numbers. B accepts a 
+      message only if it has not seen this nonce number before. </li>
+      </ul>
+    
+</div>
+
+
+<hr COLOR=black>
+<A HREF="#top">back to top</A><br>
+<A HREF="lec33.html">Prev</A>|&nbsp<A HREF="lec35.html">Next </A>|
+<A HREF="index-2.html">Index</A>
+</P>
+</BODY>
+
+<!-- Mirrored from www.cse.iitk.ac.in/users/dheeraj/cs425/lec34.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 17 Sep 2022 16:16:51 GMT -->
+</HTML>ed to prove your identity. I-Card is used as a proof of your 

@@ -1,0 +1,169 @@
+<HTML>
+
+<!-- Mirrored from www.cse.iitk.ac.in/users/dheeraj/cs425/lec14.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 17 Sep 2022 16:16:29 GMT -->
+<HEAD>
+<TITLE>
+Computer Networks: Lecture 14
+</TITLE>
+</HEAD>
+<a NAME="top"></A>
+<BODY TEXT="BLACK" BGCOLOR="#ffffff">
+<center>
+<h1>Computer Networks</h1>
+</center>
+
+<A HREF="lec13.html">Prev</a>|
+<A HREF="lec15.html">Next</A>|
+<A HREF="index-2.html">Index</A>
+<HR COLOR=black>
+<center><h2>Transport Layer Protocol</h2></center>
+<h3>What is TCP?</h3>
+<p align="left">TCP was specifically designed to provide a reliable end to
+end    byte stream over an unreliable internetwork. Each machine supporting
+TCP has    a TCP transport entity either a user process or part of the kernel
+that manages    TCP streams and interface to IP layer. A TCP entity accepts
+user data streams    from local processes, breaks them up into pieces not
+exceeding 64KB and sends    each piece as a separate IP datagram. Client
+Server mechanism is not necessary    for TCP to behave properly.</p>
+<p align="left">The IP layer gives no guarantee that datagram will be delivered
+  properly, so it is up to TCP to timeout and retransmit, if needed. Duplicate,
+  lost and out of sequence packets are handled using the sequence number,
+acknowledgements,    retransmission, timers, etc to provide a reliable service.
+Connection is a must    for this service.Bit errors are taken care of by
+the CRC checksum. One difference    from usual sequence numbering is that
+each byte is given a number instead of    each packet. This is done so that
+at the time of transmission in case of loss,    data of many small packets
+can be combined together to get a larger packet,    and hence smaller overhead.</p>
+<p align="left">TCP connection is a <i>duplex connection</i>. That means
+there    is no difference between two sides once the connection is established.</p>
+
+<h2><a name="connection"></a>TCP Connection establishment</h2>
+
+<p>  The "three-way handshake" is the procedure used to establish a   connection.
+ This procedure normally is initiated by one TCP and   responded to by another
+TCP.  The procedure also works if two TCP   simultaneously initiate the procedure.
+ When simultaneous attempt   occurs, each TCP receives a "SYN" segment which
+carries no   acknowledgment after it has sent a "SYN".  Of course, the arrival
+of   an old duplicate "SYN" segment can potentially make it appear, to the
+  recipient, that a simultaneous connection initiation is in progress.   Proper
+use of "reset" segments can disambiguate these cases.</p>
+<p> The three-way handshake   reduces the possibility of false connections.
+ It is the   implementation of a trade-off between memory and messages to
+provide   information for this checking.</p>
+<p>  The simplest three-way handshake is shown in figure below.  The   figures
+should be interpreted in the following way.  Each line is   numbered for reference
+purposes.  Right arrows (--&gt;) indicate   departure of a TCP segment from
+TCP A to TCP B, or arrival of a   segment at B from A.  Left arrows (&lt;--),
+indicate the reverse.   Ellipsis (...) indicates a segment which is still
+in the network   (delayed). TCP states represent the state AFTER   the departure
+or arrival of the segment (whose contents are shown in   the center of each
+line).  Segment contents are shown in abbreviated   form, with sequence number,
+control flags, and ACK field.  Other   fields such as window, addresses,
+lengths, and text have been left out   in the interest of clarity.</p>
+<p>  </p>
+<p></p>
+<pre>      TCP A                                                TCP B<br><br>  1.  CLOSED                                               LISTEN<br><br>  2.  SYN-SENT    --&gt; &lt;SEQ=100&gt;&lt;CTL=SYN&gt;               --&gt; SYN-RECEIVED<br><br>  3.  ESTABLISHED &lt;-- &lt;SEQ=300&gt;&lt;ACK=101&gt;&lt;CTL=SYN,ACK&gt;  &lt;-- SYN-RECEIVED<br><br>  4.  ESTABLISHED --&gt; &lt;SEQ=101&gt;&lt;ACK=301&gt;&lt;CTL=ACK&gt;       --&gt; ESTABLISHED<br><br>  5.  ESTABLISHED --&gt; &lt;SEQ=101&gt;&lt;ACK=301&gt;&lt;CTL=ACK&gt;&lt;DATA&gt; --&gt; ESTABLISHED<br><br>          Basic 3-Way Handshake for Connection Synchronisation<br><br></pre>
+
+<p>  In line 2 of above figure, TCP A begins by sending a SYN segment   indicating
+that it will use sequence numbers starting with sequence   number 100.  In
+line 3, TCP B sends a SYN and acknowledges the SYN it   received from TCP
+A.  Note that the acknowledgment field indicates TCP   B is now expecting
+to hear sequence 101, acknowledging the SYN which   occupied sequence 100.
+</p>
+<p>  At line 4, TCP A responds with an empty segment containing an ACK for
+  TCP B's SYN; and in line 5, TCP A sends some data.  Note that the   sequence
+number of the segment in line 5 is the same as in line 4   because the ACK
+does not occupy sequence number space (if it did, we   would wind up ACKing
+ACK's!).<br>
+</p>
+<p align="center"><img src="fig.lec14/tcp_connection.gif" alt=""
+ width="640" height="438"><br>
+</p>
+<p>  Simultaneous initiation is only slightly more complex, as is shown in
+  figure below.  Each TCP cycles from CLOSED to SYN-SENT to SYN-RECEIVED to
+  ESTABLISHED.</p>
+<p>  </p>
+<p></p>
+<pre>      TCP A                                            TCP B<br><br>  1.  CLOSED                                           CLOSED<br><br>  2.  SYN-SENT     --&gt; &lt;SEQ=100&gt;&lt;CTL=SYN&gt;              ...<br><br>  3.  SYN-RECEIVED &lt;-- &lt;SEQ=300&gt;&lt;CTL=SYN&gt;              &lt;-- SYN-SENT<br><br>  4.               ... &lt;SEQ=100&gt;&lt;CTL=SYN&gt;              --&gt; SYN-RECEIVED<br><br>  5.  SYN-RECEIVED --&gt; &lt;SEQ=100&gt;&lt;ACK=301&gt;&lt;CTL=SYN,ACK&gt; ...<br><br>  6.  ESTABLISHED  &lt;-- &lt;SEQ=300&gt;&lt;ACK=101&gt;&lt;CTL=SYN,ACK&gt; &lt;-- SYN-RECEIVED<br><br>  7.               ... &lt;SEQ=101&gt;&lt;ACK=301&gt;&lt;CTL=ACK&gt;     --&gt; ESTABLISHED<br><br>                Simultaneous Connection Synchronisation<br></pre>
+
+<b>Question:</b> Why is three-way handshake needed? What is the problem if
+we send only two packets and consider the connection established? What will
+be the problem from application's point of view? Will the packets be delivered
+to the wrong application?<br>
+<p><u>Problem regarding 2-way handshake</u></br>
+The only real problem with a 2-way handshake is that duplicate packets from a 
+previous connection( which has been closed) between the two nodes might still be 
+floating on the network. After a SYN has been sent to the responder, it might 
+receive a duplicate packet of a previous connection and it would regard it as a 
+packet from the current connection which would be undesirable.<br>
+Again spoofing is another issue of concern if a two way handshake is used.Suppose
+there is a node C which sends connection request to B saying that it is A.Now B sends
+an ACK to A which it rejects & asks B to close connection.Beteween these two events
+C can send a lot of packets which will be delievered to the application..</p>
+<TABLE>
+<TR><TD><img src="fig.lec14/fig2.jpg" alt="" width="288" 
+height="288"></TD>
+<TD><img src="fig.lec14/fig3.jpg" alt=""  width="288" height="288"></TD>
+<TD><img src="fig.lec14/fig4.jpg" alt=""  width="363" height="288"></TD>
+</TR>
+</TABLE>
+
+<br>
+The first two figures show how a three way handshake  deals with
+problems of duplicate/delayed connection requests and duplicate/delayed connection acknowledgements
+in the network.The third figure highlights the problem of spoofing associated with a two way handshake.
+<p>
+<b>Some Conventions</b><br>
+1. The ACK contains  'x+1' if the sequence number received is 'x'.<br>
+2. If 'ISN' is the sequence number of the connection packet then 1st data packet has the seq number 'ISN+1'<br>
+3. Seq numbers are 32 bit.They are byte seq number(every byte has a seq number).With a packet 1st seq 
+number and length of the packet is sent.<br>
+4. Acknowlegements are cummulative.<br>
+5. Acknowledgements have a seq number of their own but with a length 0.So the next data packet have the 
+seq number same as ACK.<br>
+<p>
+<b>
+Connection Establish</b></p>
+<p><center><img border="0" src="fig.lec14/establish.conn.gif"> </center>
+<ul>
+<li>
+The sender sends a SYN packet with serquence numvber say 'x'.
+<li>The receiver on receiving SYN packet responds with SYN packet with sequence number 'y' and ACK with seq number 'x+1'
+<li>On receiving both SYN and ACK packet, the sender responds with ACK packet with seq number 'y+1'
+<li>The receiver when receives ACK packet, initiates the connection.
+</ul>
+
+<p><b>Connection Release</b></p>
+
+<p><center><img border="0" src="fig.lec14/close.conn.gif"></center></p>
+<ul>
+  <li>The initiator sends a FIN with the current sequence and acknowledgement 
+  number.</li>
+  <li>The responder on receiving this informs the application program that it 
+  will receive no more data and sends an acknowledgement of the packet. The 
+  connection is now closed from one side.</li>
+  <li>Now the responder will follow similar steps to close the connection from 
+  its side. Once this is done the connection will be fully closed.</li>
+</ul>
+
+ 
+<p>
+<HR>
+<b>Image References</b>
+<br>
+<ul>
+<li>
+http://www.renoir.vill.edu/~cassel/4900/transport.html
+<li>www.uga.edu/~ucns/lans/tcpipsem/close.conn.gif
+<li>www.uga.edu/~ucns/lans/tcpipsem/establish.conn.gif
+</ul>
+
+<HR color=BLACK>
+<A HREF="#top">back to top</A><br>
+<A HREF="lec13.html">Prev</A>|&nbsp<A HREF="lec15.html">Next </A>|
+<A HREF="index-2.html">Index</A>
+</P>
+</BODY>
+
+<!-- Mirrored from www.cse.iitk.ac.in/users/dheeraj/cs425/lec14.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 17 Sep 2022 16:16:32 GMT -->
+</HTML>

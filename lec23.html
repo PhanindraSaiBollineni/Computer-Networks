@@ -1,0 +1,209 @@
+<HTML>
+
+<!-- Mirrored from www.cse.iitk.ac.in/users/dheeraj/cs425/lec23.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 17 Sep 2022 16:16:37 GMT -->
+<HEAD>
+<TITLE>
+ Computer Networks : Lecture 23
+</TITLE>
+</HEAD>
+<a NAME="top"></A>
+<BODY TEXT="BLACK" BGCOLOR="#ffffff">
+<center>
+<h1>Computer Networks </h1>
+</center>
+
+<A HREF="lec22.html">Prev</a>&nbsp;|
+<A HREF="lec24.html">Next</A>&nbsp;|
+<A HREF="index-2.html">Index</A>&nbsp;
+
+<HR COLOR=black></HR>
+<CENTER><h2>DNS (Contd...)</h2></CENTER>
+<h3>Resource Record</h3>
+A <b>Resource Record</b> (RR)&nbsp; has the following:&nbsp;</p>
+<ul>
+  <li><b>owner </b>which is the domain name where the RR is found.&nbsp;</li>
+  <li><b>type</b> which is an encoded 16 bit value that specifies the type of
+    the resource in this resource record. It can be one of the following:&nbsp;
+
+    <ul>
+      <li><b>A</b> a host address&nbsp;</li>
+      <li><b>CNAME</b> identifies the canonical name of an alias&nbsp;</li>
+      <li><b>HINFO </b>identifies the CPU and OS used by a host&nbsp;</li>
+      <li><b>MX </b>identifies a mail exchange for the domain.&nbsp;</li>
+
+      <li><b>NS </b>the authoritative name server for the domain&nbsp;</li>
+      <li><b>PTR </b>a pointer to another part of the domain name space&nbsp;</li>
+      <li><b>SOA </b>identifies the start of a zone of authority class which is
+        an encoded 16 bit value which identifies a protocol family or instance
+        of a protocol.</li>
+    </ul>
+  </li>
+  <li><b>class </b>One of: <b>IN</b> the Internet system or <b>CH</b> the Chaos
+    system&nbsp;</li>
+
+  <li><b>TTL</b> which is the time to live of the RR. This field is a 32 bit
+    integer in units of seconds, an is primarily used by resolvers when they
+    cache RRs. The TTL describes how long a RR can be cached before it should be
+    discarded.&nbsp;</li>
+  <li><b>RDATA</b> Data in this field depends on the values of the type and
+    class of the RR and a description for each is as follows:
+    <ul>
+      <li>for A: For the IN class, a 32 bit IP address For the CH class, a
+        domain name followed by a 16 bit octal Chaos address.&nbsp;</li>
+      <li>for CNAME: a domain name.&nbsp;</li>
+      <li>for MX: a 16 bit preference value (lower is better) followed by a host
+        name willing to act as a mail exchange for the owner domain.&nbsp;</li>
+
+      <li>for NS: a host name.&nbsp;</li>
+      <li>for PTR: a domain name.&nbsp;</li>
+      <li>for SOA: several fields.</li>
+    </ul>
+  </li>
+</ul>
+
+<B>Note: </b>While short TTLs can be used to minimize caching, and a zero TTL prohibits caching, the realities of Internet performance suggest that these times should be on the order of days for the         typical host. If a change can be anticipated, the TTL can be reduced prior to the change to minimize inconsistency during the change, and then increased back to its former value following the         change. The data in the RDATA section of RRs is carried as a combination of binary strings and domain names. The domain names are frequently used as "pointers" to other data in the DNS.
+
+<h3>Aliases and Cannonical Names</h3>
+Some servers typically have multiple names for convenience. For example www.iitk.ac.in & yamuna.iitk.ernet.in identify the same server. In addition multiple mailboxes might be provided by         some organizations. Most of these systems have a notion that one of the equivalent set of names is the canonical or primary name and all others are aliases.
+
+<p>When a name server fails to find a desired RR in the resource set associated with the domain name, it checks to see if the resource set consists of a CNAME record with a matching class. If so,         the name server includes the CNAME record in the response and restarts the query at the domain name specified in the data field of the CNAME record.
+
+<h3>Name Servers</h3>
+Name servers are the repositories of information that make up the domain database. The database is divided up into sections called zones, which are distributed among the name servers. Name         servers can answer queries in a simple manner; the response can always be generated using only local data, and either contains the answer to the question or a referral to other name servers "closer" to the desired information. The way that the name server answers the query depends upon whether it is operating in recursive mode or iterative mode:
+<ul>
+<li>The simplest mode <i>for the server</i> is non-recursive, since it can answer queries using only local information: the response contains an error, the answer, or a referral to some other server "closer" to the answer. All name servers must implement non-recursive queries.  
+<li>The simplest mode <i>for the client</i> is recursive, since in this mode the name server acts in the role of a resolver and returns either an error or the answer, but never referrals. This service is optional in a name server, and the name server may also choose to restrict the clients which can use recursive mode.
+</ul>
+
+<h4>Recursive Query vs Iterative Query</h4>
+
+If the server is supposed to answer a recursive quesry then the response is either the reource record data or a error code. A server operating in this mode will never return the name of any forwarding name server but will contact the appropiate name server itself and try to get the information. 
+
+<p>In iterative mode, on the other hand, if the server does not have the information requested locally then it return the address of some name server who might have the information about the query.         It is then the responsibility of the contacting application to contact the next name server to resolve its query and do this iteratively until gets an answer or and error.
+
+<h3>Relative Names</h3>
+In place of giving full DNS names like cu2.cse.iitk.ac.in or bhaskar.cc.iitk.ac.in one can give just cu2 or bhaskar.This can be used by the server side as well as the client side.But for this one has to manually specify these extensions in the database of the servers holding the resource records.
+
+<HR color=BLACK>
+
+<CENTER><h2>BOOTP</h2></CENTER>
+
+The BOOTP uses UDP/IP. It is run when the machine boots. The protocol allows diskless machines to discover their IP address and the address of the server host. Additionally name of the file          to be loaded from memory and executed is also supplied to the machine. This protocol is an improvement over RARP which has the follwing limitations:
+<ol>
+<li>Networks which do not have a broadcast method can't support RARP as it uses the broadcast method of the MAC layer underneath the IP layer. 
+<li>RARP is heavily dependent on the MAC protocol. 
+<li>RARP just supplies the IP address corresponding to a MAC address It doesn't support respond with any more data. 
+<li>RARP uses the computer hardware's address to identify the machine and hence cannot be used in networks that dynamically assign hardware addresses.
+</ol>
+
+<h3>Events in BOOTP</h3>
+<ol>
+<li>The Client broadcasts its MAC address (or other unique hardware identity number) asking for help in booting. 
+<li>The BOOTP Server responds with the data that specifies how the Client should be configured (pre-configured for the specific client) 
+</ol>
+
+<b>Note: </b>BOOTP doesn't use the MAC layer broadcast but uses UDP/IP.
+
+<h3>Configuration Information</h3>
+The important informations provided are:
+<ul>
+<li>IP address 
+<li>IP address of the default router for that particular subnet 
+<li>Subnet mask 
+<li>IP addresses of the primary and secondary nameservers
+</ul>
+
+Additionaly it may also provide:
+<ul>
+<li>Time offset from GMT 
+<li>The IP address of a time server 
+<li>The IP address of a boot server 
+<li>The name of a boot file (e.g. boot image for X terminals) 
+<li>The IP domain name for the client 
+</ul>
+
+But the problem with BOOTP is that it again can't be used for the dynamic IP's as in RARP servers.For getting dynamic IP's we use DHCP. 
+
+<HR color=BLACK>
+<CENTER><h2>DHCP (Dynamic Host Configuration Protocol)</h2></CENTER>
+DHCP (Dynamic Host Configuration Protocol) is a protocol that lets network administrators manage centrally and automate the assignment of Internet Protocol (IP) addresses in an organization's        network. If a machine uses Internet's set of protocol (TCP/IP), each machine that can connect to the Internet needs a unique IP address. When an organization sets up its computer users with a        connection to the Internet, an IP address must be assigned to each machine. Without DHCP, the IP address must be entered manually at each computer and, if computers move to another location        in another part of the network, a new IP address must be entered. DHCP lets a network administrator supervise and distribute IP addresses from a central point and automatically sends a new IP        address when a computer is plugged into a different place in the network.
+
+<h3>IP Address Allocation Mechanism</h3>
+DHCP supports three mechanisms for IP address allocation. 
+<ul>
+<li><b>Automatic allocation: </b>DHCP assigns a permanent IP address to a host. 
+<li><b>Dynamic allocation: </b>DHCP assigns an IP address to a host for a limited period of time (or until the host explicitly relinquishes the   address). 
+<li><b>Manual allocation: </b>Host's IP address is assigned by the network administrator, and DHCP is used simply to convey the assigned address to the host. A particular network will use one or more of these mechanisms, depending on the policies of the network administrator.
+</ul>
+
+<h3>Messages Used by DHCP</h3>
+
+<ul>
+<li>
+&nbsp;<b>DHCP Discover </b>- Client broadcast to locate available servers. It is assumed atleast
+one of the servers will&nbsp; have resources&nbsp; to&nbsp; fulfill the
+request.( may include additional pointers to&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; specific services required
+eg. particular subnet, minimum time limit etc ).</li>
+
+<li>
+&nbsp;<b>DHCP Offer - </b>Server to client in response to DHCP Discover with offer of configration
+parameters.</li>
+
+<li>
+&nbsp;<b>DHCP Request - </b>Client broadcast to servers requesting offered parameters from one
+server and implicitly declining offers from all others.( also important
+in case of lease renewal if the alloted time is about to expire ).</li>
+
+<li>
+&nbsp;<b>DHCP Decline - </b>Client to server indicating configration parameters invalid.<b>&nbsp;</b></li>
+
+<li>
+&nbsp;<b>DHCP Release - </b>Client to server relinquishing network address and cancelling current
+lease.( in case of a graceful shut down DHCP server is sent a DHCP Release
+by the host machine).<b>&nbsp;</b></li>
+
+<li>
+
+<b>DHCP Ack - </b>Server to client with configration parameters, including committed
+Network address.</li>
+
+<li>
+<b>DHCP Nack - </b>Server to client refusing request for configratin parameters (eg. requested
+network address already allocated).</li>
+
+<br></ul>
+
+<h3>Timers Used</h3>
+Note that lease time is the time specified by the server for which the services have been provided to the client.
+
+<ul><li><b>Lease Renewal Timer - </b>When this timer expires machine will ask the server for more time sending
+a DHCP Request.</li>
+
+<li>
+<b>Lease Rebinding Timer - </b>Whenever this timer expires, we have not been receiving any response
+from the server and so we can assume the server is down. Thus send a DHCP
+Request to all the servers using IP Broadcast facility. This is only point
+of difference between Lease renewal and rebinding.</li>
+
+<li>
+<b>Lease Expiry Timer - </b>Whenever this timer expires, the system will have to start crashing
+as the host does not have a valid IP address in the network.</li>
+
+  &nbsp;
+</ul>
+
+<h3>Timer Configuration Policy</h3>
+The timers have this usual setting which can be configured depending upon the usage pattern of the network. An example setting has been discussed below.<p>
+Lease Renewal = 50 % Lease time <br>
+Lease Rebinding = 87.5 % Lease time <br>
+Lease Expiry = 100 % Lease time<br>
+
+<HR color=BLACK>
+<A HREF="#top">back to top</A><br>
+<A HREF="lec22.html">Prev</A>|&nbsp<A HREF="lec24.html">Next </A>|
+<A HREF="index-2.html">Index</A>
+</P>
+</BODY>
+
+<!-- Mirrored from www.cse.iitk.ac.in/users/dheeraj/cs425/lec23.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 17 Sep 2022 16:16:37 GMT -->
+</HTML>er>

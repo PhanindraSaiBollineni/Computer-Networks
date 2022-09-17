@@ -1,0 +1,166 @@
+<HTML>
+<HEAD>
+<TITLE>
+    Computer Networks: Lecture 01
+</TITLE>
+</HEAD>
+<a NAME="top"></A>
+<BODY TEXT="BLACK" BGCOLOR="#ffffff">
+<center>
+<h1>Computer Networks </h1>
+</center>
+
+Prev&nbsp;|
+<A HREF="lec02.html">Next</A>&nbsp;|
+<A HREF="index-2.html">Index</A>&nbsp;
+
+<HR COLOR=black></HR>
+
+<B><U><CENTER><h2>ISO-OSI 7-Layer Network Architecture</h2></CENTER></U></B>
+<P>This lecture introduces the ISO-OSI layered architecture of Networks. According to the ISO standards, networks have 
+been divided into 7 layers depending on the complexity of the fucntionality each of these layers provide. The detailed 
+description of each of these layers is given in the notes below. We will first list the layers as defined by the 
+standard in the increasing order of function complexity:</P>
+
+<ol>
+<li><a HREF="#physical">Physical Layer</A>
+<li><a HREF="#datalink">Data Link Layer</A>
+<li><a HREF="#network">Network Layer</A>
+<li><a HREF="#transport">Transport Layer</A>
+<li><a HREF="lec02.html#session">Session Layer</A>
+<li><a HREF="lec02.html#presentation">Presentation Layer</A>
+<li><a HREF="lec02.html#application">Application Layer</A>
+</ol>
+
+
+<H3><A name="physical">Physical Layer</A></H3>
+
+This layer is the lowest layer in the OSI model. It helps in the transmission of data between two machines that are
+communicating through a physical medium, which can be optical fibres,copper wire or wireless etc. The following are the 
+main functions of the physical layer:
+<ol>
+<li><b>Hardware Specification:</b> The details of the physical cables, network interface cards, wireless radios, etc are
+a part of this layer.
+<center><br>
+<table>
+<tr><td>
+<b>Coaxial Cable</b></td><td>
+<b>Hybrid Cable</b></td><td>
+<b>Wireless Card</b></td><td>
+<b>Network Card</b></td></tr><tr><td>
+<img src="fig.lec01/coaxla.gif" height=100 width=150></td><td>
+<img src="fig.lec01/hybrids.jpg" height=100 width=150></td><td>
+<img src="fig.lec01/wireless.jpg" height=100 width=150></td><td>
+<img src="fig.lec01/card.jpg" height=100 width=150></td></tr>
+</table>
+</center><br>
+<li><b>Encoding and Signalling:</b> How are the bits encoded in the medium is also decided by this layer. For example, 
+on the coppar wire medium, we can use differnet voltage levels for a certain time interval to represent '0' and '1'. 
+We may use +5mV for 1nsec to represent '1' and -5mV for 1nsec to represent '0'. All the issues of modulation is dealt 
+with in this layer. eg, we may use Binary phase shift keying for the representation of '1' and '0' rather than using
+different volatage levels if we have to transfer in RF waves. 
+<center><br>
+<img src="fig.lec01/bpsk.gif"><br>
+<b>Binary Phase Shift Keying</b>
+</center><br>
+<li><b>Data Transmission and Reception:</b> The transfer of each bit of data is the responsibility of this layer. This 
+layer assures the transmissoin of each bit with a <i>high probability</i>. The transmission of the bits is not 
+completely reliable as their is no error correction in this layer.
+<li><b>Topology and Network Design:</b> The network design is the integral part of the physical layer. Which part of the 
+network is the router going to be placed, where the switches will be used, where we will put the hubs, how many machines
+is each switch going to handle, what server is going to be placed where, and many such concerns are to be taken care
+of by the physical layer. The variosu kinds of netopologies that we decide to use may be ring, bus, star or a hybrid of 
+these topologies depending on our requirements. 
+<center><br>
+<img src="fig.lec01/net_topo.gif"><br>
+</center><br>
+</ol>
+
+
+
+<H3><A name="datalink"> Data Link Layer</A></h3>	
+This layer provides reliable transmission of a packet by using the services of the physical layer which transmits bits over the medium in an unreliable fashion. This layer is concerned with :
+<ol>
+<li>Framing : Breaking input data into frames (typically a few hundred bytes) and caring about the frame boundaries and the size of each frame.
+<li>Acknowledgment : Sent by the receiving end to inform the source that the frame was received without any error.
+<li>Sequence Numbering : To acknowledge which frame was received.
+<li>Error Detection : The frames may be damaged, lost or duplicated leading to errors.The error control is on <b>link to link</b> basis.
+<li>Retransmission : The packet is retransmitted if the source fails to receive acknowledgment.
+<li>Flow Control : Necessary for a fast transmitter to keep pace with a slow receiver.
+</ol>
+<center><br>
+<img src="fig.lec01/data_link_layer.gif"><br>
+<b>Data Link Layer</b>
+</center><br>
+
+<h3><a name="network">Network Layer</A></h3>
+Its basic functions are routing and congestion control.<br>
+<b>Routing:</b> This deals with determining how packets will be routed (transferred) from source to destination. It can be of three types : 
+<ul>
+<li>Static : Routes are based on static tables that are "wired into" the network and are rarely changed.
+<li>Dynamic : All packets of one application can follow different routes depending upon the topology of the network, the shortest path and the current network load.
+<li>Semi-Dynamic : A route is chosen at the start of each conversation and then all the packets of the application follow the same route.
+</ul>
+<center><br>
+<img src="fig.lec01/routing.jpg"><br>
+<b>Routing</b>
+</center><br>
+The services provided by the network can be of two types :
+<ul>
+<li><b>Connection less service:</b> Each packet of an application is treated as an independent entity. On each packet of the application the destination address is provided and the packet is routed.
+<li><b>Connection oriented service:</b> Here, first a connection is established and then all packets of the application follow the same route. To understand the above concept, we can also draw an analogy from the real life. Connection oriented service is modeled after the telephone system. All voice packets go on the same path after the connection is established till the connection is hung up. It acts like a tube ; the sender pushes the objects in at one end and the receiver takes them out in the same order at the other end. Connection less service is modeled after the postal system. Each letter carries the destination address and is routed independent of all the others. Here, it is possible that the letter sent first is delayed so that the second letter reaches the destination before the first letter. 
+</ul>
+<b>Congestion Control:</b> A router can be connected to 4-5 networks. If all the networks send packet at the same time with maximum rate possible then the router may not be able to handle all the packets and may drop some/all packets. In this context the dropping of the packets should be minimized and the source whose packet was dropped should be informed. The control of such congestion is also a function of the network layer. Other issues related with this layer are transmitting time, delays, jittering.
+<br><br>
+<b>Internetworking:</b>  Internetworks are multiple networks that are connected in such a way that they act as one large network, connecting multiple office or department networks. Internetworks are connected by networking hardware such as routers, switches, and bridges.Internetworking is a solution born of three networking problems: isolated LANs, duplication of resources, and the lack of a centralized network management system. With connected LANs, companies no longer have to duplicate programs or resources on each network. This in turn gives way to managing the network from one central location instead of trying to manage each separate LAN. We should be able to transmit any packet from one network to any other network even if they follow different protocols or use different addressing modes. 
+<center><br>
+<img src="fig.lec01/internetworking.gif"><br>
+<b>Inter-Networking</b>
+</center><br>
+Network Layer <b>does not</b> guarantee that the packet will reach its intended destination. There are no reliability 
+guarantees.
+
+<h3><a name="transport">Transport Layer</A></h3>
+Its functions are :
+<ul>
+<li><b>Multiplexing / Demultiplexing :</b> Normally the transport layer will create distinct network connection for each transport connection required by the session layer. The transport layer may either create multiple network connections (to improve throughput) or it may multiplex several transport connections onto the same network connection (because creating and maintaining networks may be expensive). In the latter case, demultiplexing will be required at the receiving end. A point to note here is that communication is always carried out between two processes and not between two machines. This is also known as process-to-process communication.
+<li><b>Fragmentation and Re-assembly :</b> The data accepted by the transport layer from the session layer is split up into smaller units (fragmentation) if needed and then passed to the network layer. Correspondingly, the data provided by the network layer to the transport layer on the receiving side is re-assembled.
+<center><br>
+<table>
+<tr><td>
+<b>Fragmentation</b></td><td>
+<b>Reassembly</b></td></tr><tr><td>
+<img src="fig.lec01/frag.gif" height=300 width=400></td><td>
+<img src="fig.lec01/reass.gif" height=300 width=400></td></tr>
+</table>
+</center><br>
+<li><b>Types of service :</b> The transport layer also decides the type of service that should be provided to the session layer. The service may be perfectly reliable, or may be reliable within certain tolerances or may not be reliable at all. The message may or may not be received in the order in which it was sent. The decision regarding the type of service to be provided is taken at the time when the connection is established.
+<li><b>Error Control :</b> If reliable service is provided  then error detection and error recovery operations are also performed. It provides error control mechanism on <b>end to end</b> basis.
+<li><b>Flow Control :</b> A fast host cannot keep pace with a slow one. Hence, this is a mechanism to regulate the flow of information.
+<li><b>Connection Establishment / Release :</b> The transport layer also establishes and releases the connection across the network. This requires some sort of naming mechanism so that a process on one machine can indicate with whom it wants to communicate.
+</ul>
+<hr color=BLACK>
+<b>References of Images</b>
+<ul>
+<li>http://www.putergeek.com/.../ pci_combo_card_sm.jpg
+<li>http://blue.utb.edu/libertad/clipart/pi_wireless_pc_card_b.jpg
+<li>http://www.commscope.com/ images/hybrids.jpg hybrid cable
+<li>http://www.cba.nau.edu/facstaff/maris-j/SavedStuff/Images/net_topo.gif
+<li>http://www.ces.net/doc/2003/research/xl-unicast-routing.gif
+<li>http://www.infinitygroup.com/images/internetworking.gif
+<li>http://www.microway.com/.../ data_link_layer.gif 
+<li>http://searchnetworking.techtarget.com/WhatIs/images/coaxla.gif
+<li>http://www.df.lth.se/~pkj/thesis_report/img13.gif 
+<li>http://www.df.lth.se/~pkj/ thesis_report/img12.gif
+<li>http://www.ifla.org/VI/5/reports/rep3/rep3-2.gif
+<li>http://msp.gsfc.nasa.gov/tdrss/bpsk.gif 
+</ul>
+<hr color=BLACK>
+<A HREF="#top">back to top</A><br>
+
+Prev&nbsp;|
+<A HREF="lec02.html">Next</A>&nbsp;|
+<A HREF="index-2.html">Index</A>&nbsp;
+
+</body>
+</html>

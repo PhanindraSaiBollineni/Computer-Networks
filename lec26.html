@@ -1,0 +1,412 @@
+<html>
+
+<!-- Mirrored from www.cse.iitk.ac.in/users/dheeraj/cs425/lec26.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 17 Sep 2022 16:16:42 GMT -->
+<head>
+<title>
+CS425: Computer Networks : Lecture 26
+</title>
+</head>
+<body>
+<a NAME="top"></A>
+<body text = "BLACK" BGCOLOR="#ffffff">
+<center>
+<h1>Computer Networks (CS425)</h1>
+<h3>Instructor: Dr. Dheeraj Sanghi</h3>
+</center>
+
+<A HREF="lec25.html">Prev</a>&nbsp;|
+
+<A HREF="lec27.html">Next</A>&nbsp;|
+<A HREF="index-2.html">Index</A>&nbsp;
+<HR COLOR=black></HR>
+<CENTER><h2>
+Remote Procedure Call</h2>
+</center>
+<p align="left">
+<h3>
+Data Conversion</h3>
+<p>There is a possibility of having computers of different architectures in the 
+same network. For e.g. we may have DEC or Intel machines ( which use 
+Little-endian representation) connected with IBM or Motorola PCs (which use 
+Big-endian representation) . Now a message from an Intel machine, sent in 
+Little-endian order, may be interpreted by an IBM machine in Big-endian format. 
+This will obviously give erroneous results. So we must have some strategy to 
+convert data from one machine's native format to the other one's or, to some 
+standard network format. </p>
+<p><font color="#993300"><b>Available Methods :</b></font> </p>
+<blockquote>
+  <ul>
+    <li><b><i>Abstract Syntax Notation (ASN.1) : </i></b>This is the notation 
+    developed by the ISO, to describe the data structures used in communication, 
+    in a flexible yet standard enough way. The basic idea is to define all the 
+    data structure types ( i.e., data types) needed by each application in ASN.1 
+    and package them together in a <b>module</b>. When an application wants to 
+    transmit a data structure, it can pass the data structure to the 
+    presentation layer, along with the ASN.1 name of the data structure. Using 
+    the ASN.1 definition as a guide, the presentation layer then knows what the 
+    types and sizes of the fields are, and thus know how to encode them for 
+    transmission (<i> Explicit Typing</i>). It can be implemented with 
+    Asymmetric or Symmetric data conversion.
+    <p></li>
+
+    <li><b><i>External Data Representation (XDR) : </i></b>This is implemented 
+    using Symmetric data representation. XDR is the standard representation used 
+    for data traversing the network. XDR provides representations for most of 
+    the structures that a C-program can specify. However the encodings contain 
+    only data items and not information about their types. Thus, client and 
+    servers using XDR must agree on the exact format of messages that they will 
+    exchange (<i> Implicit Typing </i>). <br>
+    The chief advantage lies in flexibility: neither the server nor the client 
+    need to understand the architecture of the other. But, computational 
+    overhead is the main disadvantage. Nevertheless, it simplifies programming, 
+    reduces errors, increases interoperability among programs and makes easier 
+    network management and debugging. <br>
+    <i>The Buffer Paradigm : </i>XDR uses a buffer paradigm which requires a 
+    program to allocate a buffer large enough to hold the external 
+    representation of a message and to add items (i.e., fields) one at a time. 
+    Thus a complete message is created in XDR format. </li>
+  </ul>
+</blockquote>
+
+<hr>
+
+<h3>Remote Procedure Call (RPC)</h3>
+<p>RPC comes under the Application-Oriented Design, where the client-server 
+communication is in the form of Procedure Calls. We call the machine making the 
+procedure call as <i>client</i> and the machine executing the called procedure 
+as <i>server</i>. For every procedure being called there must exist a piece of 
+code which knows which machine to contact for that procedure. Such a piece of 
+code is called a <i>Stub</i>. On the client side, for every procedure being 
+called we need a unique stub. However, the stub on the server side can be more 
+general; only one stub can be used to handle more than one procedures (see 
+figure ). Also, two calls to the same procedure can be made using the same stub.
+</p>
+<p></p>
+<center>
+<img src="fig.lec26/fig1.gif">
+</center>
+<p>Now let us see how a typical remote procedure call gets executed :- </p>
+<p></p>
+<center>
+<p>
+<img src="fig.lec26/rpc.gif">
+</center>
+<blockquote>
+  <ol>
+    <li>Client program calls the stub procedure linked within its own address 
+    space. It is a normal local call. </li>
+    <li>The client stub then collects the parameters and packs them into a 
+    message (<i>Parameter Marshalling</i>). The message is then given to the 
+    transport layer for transmission. </li>
+
+    <li>The transport entity just attaches a header to the message and puts it 
+    out on the network without further ado. </li>
+    <li>When the message arrives at the server the transport entity there passes 
+    it tot the server stub, which unmarshalls the parameters. </li>
+    <li>The server stub then calls the server procedure, passing the parameters 
+    in the standard way. </li>
+    <li>After it has completed its work, the server procedure returns, the same 
+    way as any other procedure returns when it is finished. A result may also be 
+    returned. </li>
+    <li>The server stub then marshalls the result into a message and hands it 
+    off at the transport interface. </li>
+    <li>The reply gets back to the client machine. </li>
+
+    <li>The transport entity hands the result to the client stub. </li>
+    <li>Finally, the client stub returns to its caller, the client procedure, 
+    along-with the value returned by the server in step 6. </li>
+  </ol>
+</blockquote>
+<p>This whole mechanism is used to give the client procedure the illusion that 
+it is making a direct call to a distant server procedure. To the extent the 
+illusion exceeds, the mechanism is said to be <b>transparent</b>. But the 
+transparency fails in <i>parameter passing</i>. Passing any data ( or data 
+structure) by value is OK, but passing parameter 'by reference' causes problems. 
+This is because the pointer in question here, points to an address in the 
+address space of the client process, and this address space is not shared by the 
+server process. So the server will try to search the address pointed to by this 
+passed pointer, in its own address space. This address may not have the value 
+same as that on the client side, or it may not lie in the server process' 
+address space, or such an address may not even exist in the server address 
+space. </p>
+<p>One solution to this can be <b>Copy-in Copy-out</b>. What we pass is the 
+value of the pointer, instead of the pointer itself. A local pointer, pointing 
+to this value is created on the server side (<i>Copy-in</i>). When the server 
+procedure returns, the modified 'value' is returned, and is copied back to the 
+address from where it was taken (<i>Copy-out</i>). But this is disadvantageous 
+when the pointer involved point to huge data structures. Also this approach is 
+not foolproof. Consider the following example ( C-code) : </p>
+
+<p></p>
+<center>
+<p>
+<img src="fig.lec26/prog.gif" width="473" height="205"></p>
+</center>
+<p>The procedure 'myfunction()' resides on the server machine. If the program 
+executes on a single machine then we must expect the output to be '4'. But when 
+run in the client-server model we get '3'. Why ? Because 'x, and 'y' point to 
+different memory locations with the same value. Each then increments its own 
+copy and the incremented value is returned. Thus '3' is passed back and not '4'.
+</p>
+<p>Many RPC systems finesse the whole problem by prohibiting the use of 
+reference parameters, pointers, function or procedure parameters on remote calls 
+(<b>Copy-in</b>). This makes the implementation easier, but breaks down the 
+transparency. </p>
+<b>Protocol :</b>
+<blockqoute />Another key implementation issue is the protocol to be used - TCP 
+or UDP. If TCP is used then there may be problem in case of network breakdown. 
+No problem occurs if the breakdown happens before client sends its request 
+(client will be notified of this), or after the request is sent and the reply is 
+not received ( time-out will occur). In case the breakdown occurs just after the 
+server has sent the reply, then it won't be able to figure out whether its 
+response has reached the client or not. This could be devastating for bank 
+servers, which need to make sure that their reply has in fact reached to the 
+client ( probably an ATM machine). So UDP is generally preferred over TCP, in 
+making remote procedure calls. </p>
+<blockquote>
+</blockquote>
+<b>Idempotent Operations:</b>
+<blockquote>
+  <p>If the server crashes, in the middle of the computation of a procedure on 
+  behalf of a client, then what must the client do? Suppose it again sends its 
+  request, when the server comes up. So some part of the procedure will be 
+  re-computed. It may have instructions whose repeated execution may give 
+  different results each time. If the side effect of multiple execution of the 
+  procedure is exactly the same as that of one execution, then we call such 
+  procedures as <b>Idempotent Procedures</b>. In general, such operations are 
+  called <b>Idempotent Operations</b>. </p>
+  <p>For e.g. consider ATM banking. If I send a request to withdraw Rs. 200 from 
+  my account and some how the request is executed twice, then in the two 
+  transactions of 'withdrawing Rs. 200' will be shown, whereas, I will get only 
+  Rs. 200. Thus 'withdrawing is a non-idempotent operation. Now consider the 
+  case when I send a request to 'check my balance'. No matter how many times is 
+  this request executed, there will arise no inconsistency. This is an 
+  idempotent operation. </p>
+</blockquote>
+<b>Semantics of RPC :</b>
+
+<blockquote>
+  <p>If all operations could be cast into an idempotent form, then time-out and 
+  retransmission will work. But unfortunately, some operations are inherently 
+  non-idempotent (e.g., transferring money from one bank account to another ). 
+  So the exact semantics of RPC systems were categorized as follows: </p>
+  <ul>
+    <li><i>Exactly once :</i></font> Here every call is 
+    carried out 'exactly once', no more no less. But this goal is unachievable 
+    as after a server crash it is impossible to tell that a particular operation 
+    was carried out or not. </li>
+    <li><i>At most once :</i></font> when this form is 
+    used control always returns to the caller. If everything had gone right, 
+    then the operation will have been performed exactly once. But, if a server 
+    crash is detected, retransmission is not attempted, and further recovery is 
+    left up to the client. </li>
+    <li><i>At least once :</i></font> Here the client stub 
+    keeps trying over and over, until it gets a proper reply. When the caller 
+    gets control back it knows that the operation has been performed one or more 
+    times. This is ideal for idempotent operations, but fails for non-idempotent 
+    ones. </li>
+
+    <li><i>Last of many :</i></font> This a version of 'At 
+    least once', where the client stub uses a different transaction identifier 
+    in each retransmission. Now the result returned is guaranteed to be the 
+    result of the final operation, not the earlier ones. So it will be possible 
+    for the client stub to tell which reply belongs to which request and thus 
+    filter out all but the last one. </li>
+  </ul>
+</blockquote>
+<h3>
+
+SUN RPC Model</h3>
+The basic idea behind Sun RPC was to implement NFS (Network File
+System). Sun RPC extends the remote procedure call model by defining a
+remote execution enviroment. It defines a <b><i>remote program</i></b>
+at the server side as the basic unit of software that executes on a remote
+machine. Each remote program consists of one or more remote procedures
+and global data. The global data is static data and all the procedures
+inside a remote program share access to its global data. The figure below
+illustrates the conceptual organization of three remote procedures in a
+single remote program.
+
+<center>
+<p><img SRC="fig.lec26/sunrpc.gif"></center>
+
+<p>Sun RPC allows both TCP and UDP for communication between remote procedures
+and programs calling them. It uses the at least once semantic i.e., the
+remote procedure is executed at least once. It uses copy-in method of parameter
+passing but does not support copy-out style. It uses XDR for data representation.
+It does not handle orphans(which are servers whose corresponding clients
+have died). Thus if a client gives a request to a server for execution
+of a remote procedure and eventually dies before accepting the results,
+the server does not know whom to reply. It also uses a tool called <b><i>rpcgen</i></b>
+to generate stubs automatically.
+<p>Let us suppose that a client (say client1) wants to execute procedure
+P1(in the figure above). Another client (say client2) wants to execute
+procedure P2(in the figure above). Since both P1 and P2 access common global
+variables they must be executed in a mutually exclusive manner. Thus in
+view of this Sun RPC provides mutual exclusion by default i.e. no two procedures
+in a program can be active at the same time. This introduces some amount
+of delay in the execution of procedures, but mutual exclusion is a more
+fundamental and important thing to provide, without it the results may
+go wrong.
+<p>Thus we see that anything which can be a threat to application programmers,
+is provided by SUN RPC.
+<h3>
+How A Client Invokes A Procedure On Another Host</font></h3>
+<font color="#000000">The remote procedure is a part of a program
+executing in a remote host. Thus we would have to properly locate the host,
+the program in it, and the procedure in the program. Each host can be specified
+by a unique 32-bit integer. SUN RPC standard specifies that each remote
+program executing on a computer must be assigned a unique 32-bit integer
+that the caller uses to identify it. Furthermore, Sun RPC assigns a 32-bit
+integer identifier for each remote procedure inside a given remote program.
+The procedures are numbered sequentially: 1, 2, ...., N. To help ensure
+that program numbers defined by separate organizations do not conflict,
+Sun RPC has divided the set of program numbers into eight groups.</font>
+<br><font color="#000000">Thus it seems sufficient that if we are able to
+locate the host, the program in the host, and the procedure in the program,
+we would be able to uniquely locate the remote procedure which is to be
+executed.</font>
+<h3>
+Accommodating Multiple Versions Of A Remote Program</h3>
+<font color="#000000">Suppose somebody wants to change the version
+of a remote procedure in a remote program. Then as per the identification
+method described above, he or she would have to make sure that the newer
+version is compatible with the older one. This is a bottleneck on the server
+side. Sun RPC provides a solution to this problem. In addition to a program
+number, Sun RPC includes a 32-bit integer <b><i>version number</i></b>
+for each remote program. Usually, the first version of a program is assigned
+version 1. Later versions each receive a unique version number.</font>
+<br><font color="#000000">Version numbers provide the ability to change
+the details of a remote procedure call without obtaining a new program
+number. Now, the newer client and the older client are disjoint, and no
+compatibility is required between the two. When no request comes for the
+older version for a pretty long time, it is deleted. Thus, in practice,
+each RPC message identifies the intended recipient on a given computer
+by a triple:</font>
+<p><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(program number, version number, procedure number)</font>
+<p><font color="#000000">Thus it is possible to migrate from one version
+of a remote procedure to another gracefully and to test a new version of
+the server while an old version of the server continues to operate.</font>
+<h3>
+Mapping A Remote Program To A Protocol Port</h3>
+<font color="#000000">At the bottom of every communication in the
+RPC model there are transport protocols like UDP and TCP. Thus every communication
+takes place with the help of sockets. Now, how does the client know to
+which port to connect to the server? This is a real problem when we see
+that we cannot have a standard that a particular program on a particular
+host should communicate through a particular port. Because the program
+number is 32 bit and we can have 2<sup>32</sup> programs whereas both TCP
+and UDP uses 16 bit port numbers to identify communication endpoints. Thus
+RPC programs can potentially outnumber protocol ports. Thus it is impossible
+to map RPC program numbers onto protocol ports directly. More important,
+because RPC programs cannot all be assigned a unique protocol port, programmers
+cannot use a scheme that depends on well-known protocol port assignments.
+Thus, at any given time, a single computer executes only a small number
+of remote programs. As long as the port assignments are temporary, each
+RPC program can obtain a protocol port number and use it for communication.</font>
+<p><font color="#000000">If an RPC program does not use a reserved, well-known
+protocol port, clients cannot contact it directly. Because, when the server
+(remote program) begins execution, it asks the operating system to allocate
+an unused protocol port number. The server uses the newly allocated protocol
+port for all communication. The system may choose a different protocol
+port number each time the server begins(i.e., the server may have a different
+port assigned each time the system boots).</font>
+<p><font color="#000000">The client (the program that issues the remote
+procedure call) knows the machine address and RPC program number for the
+remote program it wishes to contact. However, because the RPC program (server)
+only obtains a protocol port after it begins execution, the client cannot
+know which protocol port the server obtained. Thus, the client cannot contact
+the remote program directly.</font>
+<h3>
+Dynamic Port Mapping</h3>
+<font color="#000000">To solve the port identification problem,
+a client must be able to map from an RPC program and a machine address
+to the protocol port that the server obtained on the destination machine
+when it started. The mapping must be dynamic because it can change if the
+machine reboots or if the RPC program starts execution again.</font>
+<p><font color="#000000">To allow clients to contact remote programs, the
+Sun RPC mechanism includes a dynamic mapping service. The RPC port mapping
+mechanism uses a server to maintain a small database of port mappings on
+each machine. This RPC server waits on a particular port number (111) and
+it receives the requests for all remote procedure calls.</font>
+<p><font color="#000000">Whenever a remote program (i.e., a server) begins
+execution, it allocates a local port that it will use for communication.
+The remote program then contacts the server on its local machine for registration
+and adds a pair of integers to the database:</font>
+<p><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(RPC program number, protocol port number)</font>
+<p><font color="#000000">Once an RPC program has registered itself, callers
+on other machines can find its protocol port by sending a request to the
+server. To contact a remote program, a caller must know the address of
+the machine on which the remote program executes as well as the RPC program
+number assigned to the program. The caller first contacts the server on
+the target machine, and sends an RPC program number. The server returns
+the protocol port number that the specified program is currently using.
+This server is called the <b><i>RPC port mapper</i></b> or simply the <b><i>port
+mapper</i></b>. A caller can always reach the port mapper because it communicates
+using the well known protocol port, 111. Once a caller knows the protocol
+port number the target program is using, it can contact the remote program
+program directly.</font>
+
+
+<h3>RPC Programming</font></h3>
+<font color="#000000">RPC Programming can be thought in multiple levels.
+At one extreme, the user writing the application program uses the RPC library.
+He/she need not have to worry about the communication through the network.
+At the other end there are the low level details about network communication.
+To execute a remote procedure the client would have to go through a lot
+of overhead e.g., calling XDR for formatting of data, putting it in output
+buffer, connecting to port mapper and subsequently connecting to the port
+through which the remote procedure would communicate etc. The <b><i>RPC
+library</i></b> contains procedures that provide almost everything required
+to make a remote procedure call. The library contains procedures for marshaling
+and unmarshaling of the arguments and the results respectively. Different
+XDR routines are available to change the format of data to XDR from native,
+and from XDR to native format. But still a lot of overhead remains to properly
+call the library routines. To minimize the overhead faced by the application
+programmer to call a remote procedure a tool named <b><i>rpcgen</i></b>
+is devised which generates client and server stubs. The stubs are generated
+automatically, thus they have loose flexibility e.g., the timeout time,
+the number of retransmissions are fixed. The program specification file
+is given as input and both the server and client stubs are automatically
+generated by rpcgen. The specification file should have a .x extension
+attatched to it. It contains the following information:-</font> </p>
+<ul>
+
+<li>
+<font color="#000000">constant declarations ,</font></li>
+
+<li>
+<font color="#000000">global data (if any),</font></li>
+
+<li>
+<font color="#000000">information about all remote procedures ie.</font></li>
+
+<li>
+<font color="#000000">procedure argument type ,</font></li>
+
+<li>
+
+<font color="#000000">return type .</font></li>
+</ul>
+
+  <p>&nbsp;</p>
+</blockquote>
+<hr>
+<b>References</b>
+<ol>
+<li>
+http://www.cs.cf.ac.uk/Dave/C/node33.html#fig:rpc
+</ol>
+<hr>
+<A HREF="#top">back to top</A><br>
+
+<A HREF="lec25.html">Prev</A>|&nbsp<A HREF="lec27.html">Next </A>|
+<A HREF="index-2.html">Index</A>
+</P>
+</BODY>
+
+<!-- Mirrored from www.cse.iitk.ac.in/users/dheeraj/cs425/lec26.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 17 Sep 2022 16:16:44 GMT -->
+</HTML>
+

@@ -1,0 +1,170 @@
+<html>
+
+<!-- Mirrored from www.cse.iitk.ac.in/users/dheeraj/cs425/lec30.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 17 Sep 2022 16:16:46 GMT -->
+<head>
+<title>
+ Computer Networks : Lecture 30
+</title>
+</head>
+<body>
+<a NAME="top"></A>
+<body text ="BLACK">
+<center>
+<h1>Computer Networks </h1>
+</center>
+
+<A HREF="lec29.html">Prev</a>&nbsp;|
+<A HREF="lec31.html">Next</A>&nbsp;|
+<A HREF="index-2.html">Index</A>&nbsp;
+<HR COLOR=black></HR>
+<CENTER><h2>
+PEM & SNMP</h2>
+</center>
+<p align="left">
+<h3>PEM(Privacy Enhanced Mail)</h3>
+This is a IETF standard , a result of a group working for a long time. The basic
+idea is have privacy by virtue of hierarchial authentication.&nbsp; A receiver
+trusts the message of the sender when it i accompanied by a certificate
+from his trusted authority. These authoratative certificates are distributed
+from a group called Internet Policy Registration Authority (IPRA) and&nbsp;
+Policy Certificate Authority (PCA). These trusted authority actually certifies
+the public key sent by senders. The mode of operation is as
+follows :
+<center><img src="fig.lec30/md5.gif"></center>
+One difference with PGP is that it doesn't support compression.
+<h3>SNMP(Simple
+Network Management Protocol)</h3>
+A large network can often get into various kinds of trouble due to routers
+(dropping too many packets), hosts( going down) etc. One has to keep track
+of all these occurence and adapt to such situations. A protocol has been
+defined . Under this scheme all entities in the network belong to 4 class
+:
+<ol>
+<li> Managed Nodes
+<li> Management Stations
+<li> Management Information (called Object)
+<li> A management protocol
+</ol>
+The managed nodes can be hosts,routers,bridges,printers or any other device
+capable of communicating&nbsp; status information to others. To be managed
+directly by SNMP&nbsp; , a node must be capable of running am SNMP management&nbsp;
+process,&nbsp; called SNMP agent.&nbsp; Network management is done by management
+stations by exchanging information with&nbsp; the nodes. These are basically
+general purpose computers running special management software.
+<br>
+The management stations polls the stations periodically . Since SNMP uses&nbsp; unreliable service of UDP the polling is essential to keep in touch with the nodes. Often the nodes sends a trap message indiacting that it is going to go down. The management stations then periodically checks (with an increased frequaency) . This type of polling is called trap directed polling. Often a group of nodes are represented by a single node which communicate with the managemenet stations. This type of node is called proxy agent. The proxy agent can also server as a security arrangement.
+<br>All the variables in these scheme are called Objects. Each variable can be referenced by a specific addressing scheme adopted by this system. The entire collection of all objects is called Management Information Base (MIB). The adrressing is hierarchial as seen in the picture.
+<center><IMG SRC="fig.lec30/32-pic2.gif" HEIGHT=545 WIDTH=550></CENTER>
+Internet is adressed as 1.3.61.&nbsp; All the objects under this domain has this string at the beginning. The informations are exchanged in a standard and vendor-neutral way . All the data are represented in Abstract Syntax Notation 1 (ASN.1). It is similar to XDR as in RPC but it have widely different representation scheme. A part of it actually adopted in SNMP&nbsp; and modified to form Structure Of Information Base. The Protocol specifies various kinds of messages that can be exchanged between the managed nodes and the management station.
+
+<CENTER><TABLE BORDER COLS=2 WIDTH="100%"  NOSAVE >
+<TR>
+<TD><B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+<FONT SIZE=+0>Message&nbsp;  </B></TD>
+
+<TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B><FONT SIZE=+0>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Description  </B></TD>
+</TR>
+
+<TR ALIGN=CENTER NOSAVE>
+<TD ALIGN=LEFT NOSAVE><FONT SIZE=+0>&nbsp;1. Get_Request&nbsp;  </TD>
+
+<TD><FONT SIZE=+0>Request the value for a variable  &nbsp;</TD>
+</TR>
+
+<TR ALIGN=LEFT NOSAVE>
+
+<TD NOSAVE><FONT SIZE=+0>2.&nbsp; Get_Response&nbsp;  </TD>
+
+<TD NOSAVE><FONT SIZE=+0>Returns the value of the
+variable asked for  </TD>
+</TR>
+
+<TR ALIGN=LEFT NOSAVE>
+<TD NOSAVE><FONT SIZE=+0>3. Get_Next_Request&nbsp;  </TD>
+
+<TD NOSAVE><FONT SIZE=+0>&nbsp;&nbsp;&nbsp;&nbsp;
+Request a variable next to the previous one&nbsp;  </TD>
+</TR>
+
+<TR ALIGN=LEFT NOSAVE>
+<TD><FONT SIZE=+0>4. Set_Request  </TD>
+
+<TD NOSAVE><FONT SIZE=+0>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Set the value of an Object.  </TD>
+</TR>
+
+<TR>
+<TD><FONT SIZE=+0>5. Trap  </TD>
+
+<TD><FONT SIZE=+0>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Agent to manager Trap report  </TD>
+
+</TR>
+
+<TR>
+<TD><FONT SIZE=+0>6. Get_bulk_request  </TD>
+
+<TD><FONT SIZE=+0>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Request a set of variable of same type  </TD>
+</TR>
+
+<TR>
+<TD><FONT SIZE=+0>7. Inform_Request  </TD>
+
+<TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<FONT SIZE=+0>Exchange of MIB among Management stations  </TD>
+
+</TR>
+</TABLE></CENTER>
+&nbsp;
+
+<P><FONT SIZE=+0>The last two options has been actually added in the SNMPv2.
+The fourth option need some kind of authentication from&nbsp; the management
+station.
+<H2>
+&nbsp;Addressing Example : </H2>
+&nbsp;&nbsp;&nbsp;&nbsp;  <FONT SIZE=+0>Following
+is an Example of the kind of address one can refer to when fetching a value
+in the table :-  
+
+<P><FONT SIZE=+0>&nbsp;&nbsp;&nbsp; (20) IP-Addr-Table
+= Sequence of IPAddr-Entry (1)  
+<BR><FONT COLOR="#000000"><FONT SIZE=+0>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+IPAddrEntry = SEQUENCE {  
+<BR><FONT SIZE=+0>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+IPADDENTRYADDR&nbsp;&nbsp;&nbsp; : IPADDR (1)  
+<BR><FONT SIZE=+0>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Index&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+:&nbsp; integer (2)  
+
+<BR><FONT SIZE=+0>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Netmask&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+:&nbsp; IPAddr (3)  
+
+<FONT SIZE=+0>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+}  
+
+<P>&nbsp;&nbsp;&nbsp;<FONT SIZE=+0>&nbsp; So when accessing the netmask
+of some IP-entity the variable name wld be : 
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I><FONT SIZE=+0>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+1.3.6.1.2.4.20  </I> .<I><FONT SIZE=+0>1.3.key-value  </I>
+
+<P><FONT SIZE=+0>&nbsp;&nbsp;&nbsp;&nbsp; Here since Ip-address the unique
+key to index any member of the array the address can be like :- 
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<I><FONT SIZE=+0>1.3.6.1.2.4.20.1.3.128.10.2.3  </I>
+
+<hr>
+<br>
+<A HREF="#top">back to top</A><br>
+
+<A HREF="lec29.html">Prev</A>|&nbsp<A HREF="lec31.html">Next </A>|
+<A HREF="index-2.html">Index</A>
+
+</P>
+</BODY>
+
+<!-- Mirrored from www.cse.iitk.ac.in/users/dheeraj/cs425/lec30.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 17 Sep 2022 16:16:47 GMT -->
+</HTML>

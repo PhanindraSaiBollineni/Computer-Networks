@@ -1,0 +1,158 @@
+<html>
+
+<!-- Mirrored from www.cse.iitk.ac.in/users/dheeraj/cs425/lec25.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 17 Sep 2022 16:16:40 GMT -->
+<head>
+<title>
+Computer Networks : Lecture 25
+</title>
+</head>
+<body>
+<a NAME="top"></A>
+<body text = "BLACK" BGCOLOR="#ffffff">
+<center>
+<h1>Computer Networks </h1>
+</center>
+
+<A HREF="lec24.html">Prev</a>&nbsp;|
+
+<A HREF="lec26.html">Next</A>&nbsp;|
+<A HREF="index-2.html">Index</A>&nbsp;
+<HR COLOR=black></HR>
+<CENTER><h2>
+Routing (Continued)</h2>
+</center>
+<p align="left">
+<h3>
+Shortest Path Algorithm</h3>
+
+<p><font size="4">1. Dijktstra's Algorithm:</font></p>
+
+<dt>&nbsp;At the end each node will be&nbsp; labeled (see <i>Figure.1</i>) with its 
+distance from source node along the best known path. Initially, no paths are 
+known, so all nodes are labeled with infinity. As the algorithm proceeds and 
+paths are found, the labels may change reflecting better paths. Initially, all 
+labels are tentative. When it is discovered that a label represents the shortest 
+possible path from the source to that node, it is made permanent and never 
+changed thereafter. </dt>
+
+<p>Look at the weighted undirected graph of&nbsp; <i>Figure.1(a)</i>, where the 
+weights represent, for example, distance. We want to find shortest path from&nbsp; A 
+to D. We start by making node A as permanent, indicated by a filled in circle. 
+Then we examine each of the nodes adjacent to A (the working node), relabeling 
+each one with the distance to A. Whenever a node is relabeled, we also label it 
+with the node from which the probe was made so that we can construct the final 
+path later. Having examined each of the nodes adjacent to A, we examine all the 
+tentatively labeled nodes in the whole graph and make the one with the smallest 
+label permanent, as shown in <i>Figure.1(b).</i> This one becomes new working 
+node. </p>
+<p>We now start at B, and examine all nodes adjacent to it. If the sum of the 
+label on B and the distance from B to the node being considered is less than the 
+label on the node, we have a shorter path, so the node is relabeled. After all 
+the nodes adjacent to the working node have been inspected and the tentative 
+labels changed if possible, the entire graph is searched for the tentatively 
+labeled node with the smallest value. This node is made permanent and becomes 
+the working node for the next round. The <i>Figure. 1</i> shows the first five 
+steps of the algorithm. <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<img border="0" src="fig.lec25/dijkstra1.gif" width="585" height="429"></p>
+
+<p>Note: Dijkstra's Algorithm is applicable only when cost of all the nodes is 
+non-negative.</p>
+
+<p><font size="4">2. Bellman Ford's Algorithm:</font></p>
+
+<p>We look at the distributed version which works on the premise that the 
+information about far away nodes can be had from the adjoining links.</p>
+
+<p>The algorithm works as follows. </p>
+
+<ul>
+  <ul>
+
+    <li>Compute the link costs from the starting node to every directly 
+    connected node . </li>
+    <li>Select the cheapest links for every node (if there is more than one) .
+    </li>
+    <li>For every directly connected node, compute the link costs for all these 
+    nodes. </li>
+    <li>Select the cheapest route for any node . <br>
+    Repeat until all nodes have been processed.</li>
+  </ul>
+
+</ul>
+<p>Every node should have the information about it's immediate neighbors and 
+over a period of time we will have information about other nodes. Within n units 
+of time , where n is the diameter of the network, every node will have the 
+complete information. We do not need to be synchronized i.e. do not need to 
+exchange information at the same time.</p>
+
+<p>Routing algorithms based on Dijkstra's algorithm are called Link State 
+Algorithms. Distance Vector Protocols are based on distributed Bellman's 
+algorithm. In the former we are sending little information to many nodes while 
+in the latter we send huge information to few neighbors.</p>
+
+<p>&nbsp;</p>
+
+<p><b><i>Count-to-Infinity problem:</i></b> <br>
+&nbsp; </p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img 
+src="fig.lec25/count.gif" width="324" height="303">
+</p>
+
+<p>&nbsp; Suppose the link between A and E is down events may occur are: <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (1) F tells A that it has a path to E with cost 6 <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (2) A sets cost to E to be 11, and advertise to F again <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (3) F sets the cost to E to be 16, and advertise to A again </p>
+<p>This cycle will continue and the cost to E goes to infinity. The core of the 
+problem is that when X tells Y that it has a path somewhere ,Y has no way to 
+know whether it itself is on the path.</p>
+<p>&nbsp;&nbsp;&nbsp; During this process of counting to infinity, packets from A or F destined 
+to E are likely to loop back and forth between A and F, causing congestion for 
+other packets. </p>
+
+<p>&nbsp;</p>
+
+<dt><b><font size="+1">Example to illustrate bad Routing Protocol :</font></b>
+</dt>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><font size="+1"> </font></b>Design of a bad routing protocol can 
+lead to highly undesirable results. Consider the following scenario to 
+understand this. We are having 16 nodes logically connected in a ring as shown 
+in Figure1. <br>
+&nbsp; </p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img 
+src="fig.lec25/bad.gif" width="300" height="325">
+<br>
+</p>
+<p>Each node sends one unit of data in unit time except one node Q which sends e 
+(0&lt;e&lt;1) unit of data in unit time. We consider cost of the link as the traffic 
+in that link. We consider P as the only receiver in the ring. Now Ideally we 
+must have nodes left of the diagonal PQ sending data clockwise and that on the 
+right of the PQ counterclockwise as shown in Figure 2. We may assume that Q 
+sends data counterclockwise. Assume that this ideal distribution was achieved at 
+some time. Now we can see that cost of links to the left of PQ are respectively 
+1,2,3 ..,7 while that on the right of PQ are e,1+e,2+e ..,7+e. Therefore when we 
+reconsider the shortest path the node immediately to the right of Q will see 
+traffic 28 to the left while 28+7e to the right and therefore will start sending 
+data clockwise and same is true for Q also. This will heavily change the traffic 
+on the network. Now the traffic load will shift to the left of PQ and next 
+reconsideration will make a lot of nodes from left of PQ send data 
+counterclockwise. This may keep oscillating and will cost a lot to the network. 
+To prevent these two steps can be taken : </p>
+
+<p>1. Assign a minimum cost to each link. </p>
+<p>2. Do not change the route until you get a significant advantage. </p>
+
+
+
+
+<HR color=BLACK>
+<A HREF="#top">back to top</A><br>
+
+<A HREF="lec24.html">Prev</A>|&nbsp<A HREF="lec26.html">Next </A>|
+<A HREF="index-2.html">Index</A>
+</P>
+</BODY>
+
+<!-- Mirrored from www.cse.iitk.ac.in/users/dheeraj/cs425/lec25.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 17 Sep 2022 16:16:41 GMT -->
+</HTML>
+

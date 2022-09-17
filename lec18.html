@@ -1,0 +1,362 @@
+<HTML>
+
+<!-- Mirrored from www.cse.iitk.ac.in/users/dheeraj/cs425/lec18.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 17 Sep 2022 16:16:34 GMT -->
+<HEAD>
+<TITLE>
+Computer Networks : Lecture 18
+</TITLE>
+</HEAD>
+<a NAME="top"></A>
+<BODY TEXT="BLACK" BGCOLOR="#ffffff">
+<center>
+<h1>Computer Networks </h1>
+</center>
+
+<A HREF="lec17.html">Prev</a>&nbsp;|
+<A HREF="lec19.html">Next</A>&nbsp;|
+<A HREF="index-2.html">Index</A>&nbsp;
+
+<HR COLOR=black></HR>
+<CENTER><h2>Unix Socket Programming (Contd..)</h2></CENTER>
+
+<h3>Client-Server Communication Overview</h3>
+The analogy given below is often very useful in understanding many such networking concepts. The analogy is of a number of people in a room communicating with each other by way of talking. In a typical scenario, if A has to talk to B, then he would call out the name of B and only if B was listening would he respond. In case B responds, then one can say that a connection has been established. Henceforth until both of them desire to communicate, they can carry out their conversation.<p>
+
+A Client-Server architecture generally employed in networks is also very similar in concept. Each machine can act as a client or a server.<p>
+
+<b>Server: </b>It is normally defined which provides some sevices to the client programs. However, we will have a deeper look at the concept of a "service" in this respect later. The most important feature of a server is that it is a passive entiry, one that listens for request from the clients. <p>
+<b>Client: </b>It is the active entity of the architecture, one that generated this request to connect to a particular port number on a particular server <p>
+
+Communication takes the form of the client process sending a message over the network to the server process. The client process then waits for a reply message. When the server process gets the request, it performs the requested work and sends back a reply.The server that the client will try to connect to should be up and running before the client can be executed. In most of the cases, the servers runs continuously as a daemon. <p>
+
+There is a general misconception that servers necessarily provide some service and is therefore called a server. For example an e-mail client provides as much service as an mail server does. Actually the term service is not very well defined. So it would be better not to refer to the term at all. In fact servers can be programmed to do practically anything that a normal application can do. In brief, a server is just an entity that listens/waits for requests.<p>
+
+To send a request, the client needs to know the address of the server as well as the port number which has to be supplied to establish a connection. One option is to make the server choose a random number as a port number, which will be somehow conveyed to the client. Subsequently the client will use this port number to send requests. This method has severe limitations as such information has to be communicated offline, the network connection not yet being established. A better option would be to ensure that the server runs on the same port number always and the client already has knowledge as to which port provides which service. Such a standardization already exists. The port numbers 0-1023 are reserved for the use of the superuser only. The list of the services and the ports can be found in the file /etc/services.<p>
+
+<h3>Connection Oriented vs Connectionless Communication</h3>
+<h4>Connection Oriented Communication</h4>
+Analogous to the telephone network.The sender requests for a communication (dial the number), the receiver gets an indication (the phone ring) the receiver accepts the connection (picks up the phone) and the sender receives the acknowledgment (the ring stops). The connection is established through a dedicated link provided for the communication. This type of communication is characterized by a high level of reliability in terms of the number and the sequence of bytes.
+
+<h4>Connectionless Communication</h4>
+Analogous to the postal service. Packets(letters) are sent at a time to a particular destination. For greater reliability, the receiver may send an acknowledgement (a receipt for the registered letters).
+
+<p>Based on this two types of communication, two kinds of sockets are used:
+<ul>
+<li>
+<b>stream sockets: </b>used for connection-oriented communication, when reliability in connection is desired.
+<li>    
+<b>datagram sockets: </b>used for connectionless communication, when reliability is not as much as an issue compared to the cost of providing that reliability. For eg. streaming audio/video is always send over such sockets so as to diminish network traffic. 
+</ul>
+<h4>Sequence of System Calls for Connection Oriented communication</h4>
+The typical set of system calls on both the machines in a connection-oriented setup is shown in Figure below.
+
+<center>
+<img src="fig.lec18/conn_orr.gif">
+</center>
+
+<p>The sequence of system calls that have to be made in order to setup a
+connection is given below.</p>
+<ol>
+  <li>The <i>socket</i> system call is used to obtain a socket descriptor on
+  both the client and the server. Both these calls need not be synchronous or
+  related in the time at which they are called.The synopsis is given below:<br>
+  &nbsp;<table border="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="100%" id="AutoNumber8">
+    <tr>
+      <td width="100%">#include&lt;sys/types.h&gt;</td>
+    </tr>
+    <tr>
+    <td width="100%">#include&lt;sys/socket.h&gt;</td>
+    </tr>
+    <tr>
+      <td width="100%">int socket(int domain, int type, int protocol);</td>
+    </tr>
+    <tr>
+      <td width="100%">&nbsp;</td>
+    </tr>
+  </table>
+&nbsp;</li>
+  <li>Both the client and the server 'bind' to a particular port on their
+  machines using the <a href="#label"><i>bind</i></a> system call. This function has to be called
+  only after a socket has been created and has to be passed the socket
+  descriptor returned by the <i>socket</i> call. Again this binding on both the
+  machines need not be in any particular order. Moreover the binding procedure
+  on the client is entirely optional. The <i>bind </i>system call requires the
+  address family, the port number and the IP address. The address family is
+  known to be AF_INET, the IP address of the client is already known to the
+  operating system. All that remains is the port number. Of course the
+  programmer can specify which port to bind to, but this is not necessary. The
+  binding can be done on a random port as well and still everything would work
+  fine. The way to make this happen is not to call <i>bind</i> at all.
+  Alternatively<i> bind</i> can be called with the port number set to 0. This
+  tells the operating system to assign a random port number to this socket.<i>
+  </i>This way whenever the program tries to connect to a remote machine through
+  this socket, the operating system binds this socket to a random local port.
+  This procedure as mentioned above is not applicable to a server, which has to
+  listen at a standard predetermined port.<br>
+&nbsp;</li>
+  <li>The next call has to be <i>listen</i> to be made on the server. The
+  synopsis of the <i>listen</i> call is given below.<br>
+&nbsp;<table border="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="100%" id="AutoNumber8">
+    <tr>
+      <td width="100%">#include&lt;sys/socket.h&gt;</td>
+    </tr>
+    <tr>
+      <td width="100%">int listen(int skfd, int backlog);</td>
+    </tr>
+  </table>
+  <p><i>skfd</i> is the socket descriptor of the socket on which the machine
+  should start listening. <br>
+  <i>backlog</i> is the maximum length of the queue for accepting requests.<br>
+  <p>
+  The <i>connect</i> system call signifies that the server is willing to accept
+  connections and thereby start communicating.</p>
+  <p>Actually what happens is that in the TCP suite, there are certain messages
+  that are sent to and fro and certain initializations have to be performed.
+  Some finite amount of time is required to setup the resources and allocate
+  memory for whatever data structures that will be needed. In this time if
+  another request arrives at the same port, it has to wait in a queue. Now this
+  queue cannot be arbitrarily large. After the queue reaches a particular size
+  limit&nbsp; no more requests are accepted by the operating system. This size
+  limit is precisely the <i>backlog </i>argument in the <i>listen</i> call and
+  is something that the programmer can set. Today's processors are pretty speedy
+  in their computations and memory allocations. So under normal circumstances
+  the length of the queue never exceeds 2 or 3. Thus a <i>backlog</i> value of
+  2-3 would be fine, though the value typically used is around 5.Note that this call is different
+  from the concept of "parallel" connections.The established connections are not
+  counted in n. So, we may have 100 parallel connection running at a time when
+   n=5.<p>
+&nbsp;</li>
+  <li>The <i>connect</i> function is then called on the client with three
+  arguments, namely the socket descriptor, the remote server address and the
+  length of the address data structure. The synopsis of the function is as
+  follows:<p>
+&nbsp;<table border="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="100%" id="AutoNumber9">
+    <tr>
+      <td width="100%">#include&lt;sys/socket.h&gt;</td>
+    </tr>
+    <tr>
+      <td width="100%">#include&lt;netinet/in.h&gt; /* only for AF_INET , or the INET 
+      Domain */</td>
+    </tr>
+    <tr>
+      <td width="100%">&nbsp;</td>
+    </tr>
+    <tr>
+      <td width="100%">int connect(int skfd, struct sockaddr* addr, int addrlen);</td>
+    </tr>
+  </table>
+  <p>This function initiates a connection on a socket.<br>
+  <i>skfd</i> is the same old socket descriptor.<br>
+  <i>addr </i>is again the same kind of structure as used in the <i>bind </i>
+  system call. More often than not, we will be creating a structure of the type
+  <i>sockaddr_in </i>instead of <i>sockaddr</i> and filling it with appropriate 
+  data. Just while sending the pointer to that structure to the <i>connect </i>
+  or even the <i>bind</i> system call, we cast it into a pointer to a <i>
+  sockaddr</i> structure. The reason for doing all this is that the <i>
+  sockaddr_in</i> is more convenient to use in case of INET domain applications.
+  <i>addr</i> basically contains the port number and IP address of the server 
+  which the local machine wants to connect to. This call normally <b>blocks </b>
+  until either the connection is established or is rejected.<br>
+  <i>addrlen</i> is the length of the socket address structure, the pointer to 
+  which is the second argument.<p>
+&nbsp;</li>
+  <li>The request generated by this <i>connect</i> call is processed by the 
+  remote server and is placed in an operating system buffer, waiting to be 
+  handed over to the application which will be calling the <i>accept</i> 
+  function. The<i> accept</i><b>&nbsp; </b>call is the mechanism by which the 
+  networking program on the server receives that requests that have been 
+  accepted by the operating system. This synopsis of the <i>accept</i> system 
+  call is given below.<p>
+&nbsp;<table border="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="100%" id="AutoNumber10">
+    <tr>
+      <td width="100%">#include&lt;sys/socket.h&gt;</td>
+    </tr>
+    <tr>
+      <td width="100%">&nbsp;</td>
+    </tr>
+    <tr>
+      <td width="100%">int accept(int skfd, struct sockaddr* addr, int addrlen);</td>
+    </tr>
+  </table>
+  <p><i>skfd</i> is the socket descriptor of the socket on which the machine had 
+  performed a <i>listen</i> call and now desires to accept a request on that 
+  socket.<br>
+  <i>addr </i>is the address structure that will be filled in by the operating 
+  system by the port number and IP address of the client which has made this 
+  request. This <i>sockaddr</i> pointer can be type-casted to a <i>sockaddr_in
+  </i>pointer for subsequent operations on it.<br>
+  <i>addrlen</i> is again the length of the socket address structure, the 
+  pointer to which is the second argument.<br>
+  <p>
+  This function&nbsp; <i>accept</i> extracts aconnection on the buffer of 
+  pending connections in the system, creates a new socket with the same 
+  properties as skfd, and returns a new file descriptor for the socket.<br>
+  <p>
+  In fact, such an architecture has been criticized to the extent that the 
+  applications do not have a say on what connections the operating system should 
+  accept. The system accepts all requests irrespective of which IP, port number 
+  they are coming from and which application they are for. All such packets are 
+  processed and sent to the respective applications, and it is then that the 
+  application can decide what to do with that request.<br>
+  The <i>accept</i> call is a blocking system call. In case there are requests 
+  present in the system buffer, they will be returned and in case there aren't 
+  any, the call simply blocks until one arrives.<br>
+  This new socket is made on the same port that is listening to new connections. 
+  It might sound a bit weird, but it is perfectly valid and the new connection 
+  made is indeed a unique connection. Formally the definition of a <i>connection</i> 
+  is</p>
+  <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="100%" id="AutoNumber11">
+    <tr>
+      <td width="16%"><b>connection:</b></td>
+      <td width="84%">defined as a 4-tuple : (Local IP, Local port, Foreign IP, 
+      Foreign port)</td>
+    </tr>
+  </table>
+  <p>For each connection at least one of these has to be unique. Therefore 
+  multiple connections on one port of the server, actually are different.<br>
+&nbsp;</li>
+  <li>Finally when both <i>connect</i> and <i>accept</i> return the connection 
+  has been established.<br>
+&nbsp;</li>
+  <li>The socket descriptors that are with the server and the client can now be 
+  used identically as a normal I/O descriptor. Both the <i>read</i> and the <i>
+  write</i> calls can be performed on this socket descriptor. The <i>close</i> 
+  call can be performed on this descriptor to close the connection. Man pages on 
+  any UNIX type system will furnish further details about these generic I/O 
+  calls.<br>
+&nbsp;</li>
+  <li>Variants of <i>read</i> and <i>write</i> also exist, which were 
+  specifically designed for networking applications. These are <i>recv</i> and
+  <i>send</i>.<p>
+&nbsp;<table border="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="100%" id="AutoNumber12">
+    <tr>
+      <td width="100%">#include&lt;sys/socket.h&gt;</td>
+    </tr>
+    <tr>
+      <td width="100%">&nbsp;</td>
+    </tr>
+    <tr>
+      <td width="100%">int recv(int skfd, void *buf, int buflen, int flags);</td>
+    </tr>
+    <tr>
+      <td width="100%">int send(int skfd, void *buf, int buflen, int flags);</td>
+    </tr>
+  </table>
+  <p>Except for the <i>flags</i> argument the rest is identical to the arguments 
+  of the <i>read</i> and <i>write</i> calls. Possible values for the <i>flags</i> 
+  are:<p>
+&nbsp;</p>
+  <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="89%" id="AutoNumber13" height="78">
+    <tr>
+      <td width="15%" height="19">
+      <p align="center"><i>used for</i></td>
+      <td width="6%" height="19">&nbsp;</td>
+      <td width="171" height="19">
+      <p align="center"><i>macro for the flag</i></td>
+      <td width="6%" height="19">&nbsp;</td>
+      <td width="368%" height="19">
+      <p align="center"><i>comment</i></td>
+    </tr>
+    <tr>
+      <td width="15%" height="18"></td>
+      <td width="6%" height="18"></td>
+      <td width="171" height="18"></td>
+      <td width="6%" height="18"></td>
+      <td width="368%" height="18"></td>
+    </tr>
+    <tr>
+      <td width="15%" height="18">
+      <p align="center"><i>recv</i></td>
+      <td width="6%" height="18"></td>
+      <td width="171" height="18">
+      <p align="left"><b>MSG_PEEK</b></td>
+      <td width="6%" height="18"></td>
+      <td width="368%" height="18">look at the message in the buffer but do not 
+      consider it read</td>
+    </tr>
+    <tr>
+      <td width="15%" height="19">
+      <p align="center"><i>send</i></td>
+      <td width="6%" height="19">&nbsp;</td>
+      <td width="171" height="19">
+      <p align="left"><b>MSG_DONT_ROUTE</b></td>
+      <td width="6%" height="19">&nbsp;</td>
+      <td width="368%" height="19">send message only if the destination is on 
+      the same network, i.e. directly connected to the local machine.</td>
+    </tr>
+    <tr>
+      <td width="15%" height="19">
+      <p align="center"><i>recv</i> &amp; <i>send</i></td>
+      <td width="6%" height="19">&nbsp;</td>
+      <td width="171" height="19">
+      <p align="left"><b>MSG_OOB</b></td>
+      <td width="6%" height="19">&nbsp;</td>
+      <td width="368%" height="19">used for transferring data out of sequence, 
+      when some bytes in a stream might be more important than others.</td>
+    </tr>
+  </table>
+ <p><p></p>
+  </li>
+  <li>To close a particular connection the <i>shutdown</i> call can also be used 
+  to achieve greater flexibility.<p>
+&nbsp;<table border="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="100%" id="AutoNumber14">
+    <tr>
+      <td width="100%">#include&lt;sys/socket.h&gt;</td>
+    </tr>
+    <tr>
+      <td width="100%">&nbsp;</td>
+    </tr>
+    <tr>
+      <td width="100%">int shutdown(int skfd, int how);</td>
+    </tr>
+  </table>
+  <p><i>skfd</i> is the socket descriptor of the socket which needs to be 
+  closed.<br>
+  <i>how</i> can be one of the following:<br>
+&nbsp;</p>
+  <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="100%" id="AutoNumber15">
+    <tr>
+      <td width="11%"><b>SHUT_RD</b></td>
+      <td width="3%">
+      <p align="center">or</td>
+      <td width="3%">
+      <p align="center">0</td>
+      <td width="83%">stop all read operations on this socket, but continue 
+      writing</td>
+    </tr>
+    <tr>
+      <td width="11%"><b>SHUT_WR</b></td>
+      <td width="3%">
+      <p align="center">or</td>
+      <td width="3%">
+      <p align="center">1</td>
+      <td width="83%">stop all write operations on this socket, but keep 
+      receiving data</td>
+    </tr>
+    <tr>
+      <td width="11%"><b>SHUT_RDWR</b></td>
+      <td width="3%">
+      <p align="center">or</td>
+      <td width="3%">
+      <p align="center">2</td>
+      <td width="83%">same as close</td>
+    </tr>
+  </table>
+  <p>A port can be reused only if it has been closed completely.</li>
+</ol>
+</center>
+<hr>
+<h3>Image References</h3>
+<ul>
+<li>http://publib.boulder.ibm.com/iseries/v5r1/ic2924/info/rzab6/rxab6502.gif
+</ul>
+
+<HR color=BLACK>
+<A HREF="#top">back to top</A><br>
+<A HREF="lec17.html">Prev</A>|&nbsp<A HREF="lec19.html">Next </A>|
+<A HREF="index-2.html">Index</A>
+</P>
+</BODY>
+
+<!-- Mirrored from www.cse.iitk.ac.in/users/dheeraj/cs425/lec18.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 17 Sep 2022 16:16:35 GMT -->
+</HTML>.

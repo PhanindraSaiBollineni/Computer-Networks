@@ -1,0 +1,176 @@
+<HTML>
+
+<!-- Mirrored from www.cse.iitk.ac.in/users/dheeraj/cs425/lec17.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 17 Sep 2022 16:16:34 GMT -->
+<HEAD>
+<TITLE>
+Computer Networks : Lecture 17
+</TITLE>
+</HEAD>
+<a NAME="top"></A>
+<BODY TEXT="BLACK" BGCOLOR="#ffffff">
+<center>
+<h1>Computer Networks</h1>
+</center>
+
+<A HREF="lec16.html">Prev</a>&nbsp;|
+<A HREF="lec18.html">Next</A>&nbsp;|
+<A HREF="index-2.html">Index</A>&nbsp;
+
+<HR COLOR=black></HR>
+<CENTER><h2>Unix Socket Programming</h2></CENTER>
+<b><h3>Client Server Architecture</h3></b>
+In the client server architecture, a machine(refered as client) makes a request to connect to another machine (called as server) for providing some service. The services running on the server run on known ports(application identifiers) and the client needs to know the address of the server machine and this port in order to connect to the server. On the other hand, the server does not need to know about the address or the port of the client at the time of connection initiation. The first packet which the client sends as a request to the server contains these informations about the client which are further used by the server to send any information. Client acts as the active device which makes the first move to establish the connection whereas the server passively waits for such requests from some client.
+<br><center>
+<img src="fig.lec17/client_server.gif">
+<br>
+<b>Illustration of Client Server Model</b>
+</center>
+<p>
+<b><h3>What is a Socket ?</h3></b>
+In unix, whenever there is a need for inter process communication within the same machine, we use mechanism like signals or pipes(named or unnamed). Similarly, when we desire a communication between two applications possibly running on different machines, we need <b>sockets</b>. Sockets are treated as another entry in the unix open file table. So all the system calls which can be used for any IO in unix can be used on socket. The server and client applications use various system calls to conenct  which use the basic construct called <b>socket</b>. A socket is one end of the communication channel between two applications running on different machines.
+<br><br>
+Steps followed by client to establish the connection:
+<ol>
+<li>Create a socket
+<li>Connect the socket to the address of the server
+<li>Send/Receive data
+<li>Close the socket
+</ol>
+Steps followed by server to establish the connection:
+<ol>
+<li>Create a socket
+<li>Bind the socket to the port number known to all clients
+<li>Listen for the connection request
+<li>Accept connection request
+<li>Send/Receive data
+</ol>
+<h3>Basic data structures used in Socket programming</h3>
+<b>Socket Descriptor:</b> A simple file descriptor in Unix.
+<TABLE BORDER="0" WIDTH="100%"><TR><TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int 
+</TD></TR></TABLE>
+<b>Socket Address:</b> This construct holds the information for socket address<br>
+<TABLE BORDER="0" WIDTH="100%"><TR><TD>
+<PRE
+CLASS="programlisting"
+>&#13;    struct sockaddrs {
+        unsigned short    sa_family;    // address family, AF_xxx or PF_xxx
+        char              sa_data[14];  // 14 bytes of protocol address
+    }; 
+
+</PRE>
+</TD></TR></TABLE>
+AF stands for Address Family and PF stands for Protocol Family. In most modern implementations
+only the AF is being used. The various kinds of AF are as follows:
+<PRE CLASS="programlisting">
+              Name                   Purpose                 
+       AF_UNIX, AF_LOCAL      Local communication              
+       AF_INET                IPv4 Internet protocols        
+       AF_INET6               IPv6 Internet protocols
+       AF_IPX                 IPX - Novell protocols
+       AF_NETLINK             Kernel user interface device    
+       AF_X25                 ITU-T X.25 / ISO-8208 protocol 
+       AF_AX25                Amateur radio AX.25 protocol
+       AF_ATMPVC              Access to raw ATM PVCs
+       AF_APPLETALK           Appletalk                      
+       AF_PACKET              Low level packet interface     
+</PRE>
+In all the sample programs given below, we will be using AF_INET.
+<br>
+<b>struct sockaddr_in:</b> This construct holds the information about the address family, port number, Internet address,and the size of the struct sockaddr.
+<TABLE BORDER="0" WIDTH="100%"><TR><TD>
+<PRE
+CLASS="programlisting"
+>&#13;    struct sockaddr_in {
+        short int          sin_family;  // Address family
+        unsigned short int sin_port;    // Port number
+        struct in_addr     sin_addr;    // Internet address
+        unsigned char      sin_zero[8]; // Same size as struct sockaddr
+    }; 
+
+</PRE>
+</TD></TR></TABLE>
+<br>
+Some systems (like x8086) are Little Endian i-e. least signficant byte is stored in the higher address, whereas in Big endian systems most significant byte is stored in the higher address. Consider a situation where a Little Endian system wants to communicate with a Big Endian one, if there is no standard for data representation then the data sent by one machine is misinterpreted by the other. So standard has been defined for the data representation in the network (called Network Byte Order)  which is the Big Endian.
+The system calls that help us to convert a short/long from Host Byte order to Network Byte Order and viceversa are 
+ <ul>
+ <li> htons() -- "Host to Network Short"
+ <li> htonl() -- "Host to Network Long"
+ <li> ntohs() -- "Network to Host Short"
+ <li> ntohl() -- "Network to Host Long"
+</ul>
+<h3>IP addresses</h3>
+Assuming that we are dealing with IPv4 addresses, the address is a 32bit integer. Remembering a 32 bit number is not convenient for humans. So, the address is written as a set of four integers seperated by dots, where each integer is a representation of 8 bits. The representation is like a.b.c.d, where a is the representation of the most significant byte. The system call which converts this representation into Network Byte Order is:
+<TABLE BORDER="0" WIDTH="100%"><TR><TD>
+<PRE CLASS="programlisting" >
+int inet_aton(const char *cp, struct in_addr *inp);
+</PRE>
+</TD></TR></TABLE>
+<b> inet_aton()</b> converts the Internet host address  <i>cp</i>  from  the  standard numbers-and-dots  notation into binary data and stores it in the structure that <i>inp</i> points to. inet_aton returns nonzero if  the  address  is valid, zero if not.<br>
+For example, if we want to initialize the sockaddr_in construct by the IP address and desired port number, it is done as follows:
+<TABLE BORDER="0" WIDTH="100%"><TR><TD>
+<PRE CLASS="programlisting" >
+&#13;        struct sockaddr_in sockaddr;
+        sockaddr.sin_family = AF_INET;
+        sockaddr.sin_port = htons(21);
+        inet_aton("172.26.117.168", &(sockaddr.sin_addr)); 
+        memset(&(sockaddr.sin_zero), '\0', 8);
+    
+</PRE>
+</TD></TR></TABLE>
+
+<h3>Socket System Call</h3>
+A socket is created using the system call:
+<TABLE BORDER="0" WIDTH="100%"><TR><TD>
+<PRE CLASS="programlisting"
+>&#13;
+int socket( domain , type , protocol);
+</PRE>
+</TD></TR></TABLE>
+This system call returns a Socket Descriptor (like file descriptor) which is an integer  value. Details about the Arguments:
+<ol>
+<li><b>Domain: </b>It specifies the communication domain. It takes one of the predefined  values described under the protocol family and address family above in this lecture.
+<li><b>Type: </b>It specifies the semantics of communication , or the type of service that  is desired . It takes the following values: 
+<ul>
+<li>SOCK_STREAM  : Stream Socket 
+<li>SOCK_DGRAM  : Datagram Socket 
+<li>SOCK_RAW  : Raw Socket 
+<li>SOCK_SEQPACKET  : Sequenced Packet Socket 
+<li>SOCK_RDM  : Reliably Delivered Message Packet 
+</ul>
+<li><b>Protocol: </b>This parameter identifies the protocol the socket is supposed to use .  Some values are as follows: 
+<ul>
+<li>IPPROTO_TCP  : For TCP (SOCK_STREAM) 
+<li>IPPROTO_UDP  : For UDP (SOCK_DRAM) 
+</ul>
+Since we have only one protocol for each kind of socket, it does not matter if we do not  define any protocol at all. So for simplicity, we can put "0" (zero) in the protocol field.
+</ol>
+
+<h3>Bind System Call</h3>
+The system call bind associates an address to a socket descriptor created by socket. 
+<TABLE BORDER="0" WIDTH="100%"><TR><TD>
+<PRE CLASS="programlisting"
+>&#13;
+int bind  ( int sockfd  ,  struct sockaddr *myaddr  ,  int addrlen );
+</PRE>
+</TD></TR></TABLE>
+The second parameter <i>myaddr</i> specifies a pointer to a predefined address of the  socket.Its structure is a general address structure so that the bind system call can be used  by both Unix domain and Internet domain sockets. 
+
+<h3>Other System Calls and their Functions</h3>
+LISTEN : Annoumce willingness to accept connections ; give queue size. <br>
+ACCEPT : Block the caller until a commwction attempt arrives. <br>
+CONNECT : Actively attempt to establish a connection. <br>
+SEND : Send some data over the connection. <br>
+RECIEVE : Recieve sme data from the connection.<br> 
+CLOSE : Release the connection.
+
+<hr COLOR=black>
+<A HREF="#top">back to top</A><br>
+<A HREF="lec16.html">Prev</a>&nbsp;|
+<A HREF="lec18.html">Next</A>&nbsp;|
+<A HREF="index-2.html">Index</A>&nbsp;
+
+</body>
+
+<!-- Mirrored from www.cse.iitk.ac.in/users/dheeraj/cs425/lec17.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 17 Sep 2022 16:16:34 GMT -->
+</html>

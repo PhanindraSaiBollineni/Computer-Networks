@@ -1,0 +1,82 @@
+<HTML>
+
+<!-- Mirrored from www.cse.iitk.ac.in/users/dheeraj/cs425/lec11.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 17 Sep 2022 16:16:29 GMT -->
+<HEAD>
+<TITLE>
+ Computer Networks: Lecture 11
+</TITLE>
+</HEAD>
+<a NAME="top"></A>
+<BODY TEXT="BLACK" BGCOLOR="#ffffff">
+<center>
+<h1>Computer Networks </h1>
+</center>
+
+<A HREF="lec10.html">Prev</a>|
+<A HREF="lec12.html">Next</A>|
+<A HREF="index-2.html">Index</A>
+
+<HR COLOR=black></HR>
+<center><h2>Network Layer (Continued...)</h2></center><p>
+The network layer is concerned with getting packets from the source all the way to the destnation. The packets may require to make many hops at the intermediate routers while reaching the destination. This is the lowest layer that deals with end to end transmission. In order to achieve its goals, the network later must know about the topology of the communication network. It must also take care to choose routes to avoid overloading of some of the communication lines while leaving others idle. The main functions performed by the network layer are as follows:
+<ul>
+<li>Routing
+<li>Congestion Control
+<li>Internetwokring
+</ul>
+
+<h3>Routing</h3>
+Routing is the process of forwarding of a packet in a network so that it reaches its intended destination. The main goals of routing are:
+<ol>
+<li><b>Correctness: </b>The routing should be done properly and correctly so that the packets may reach their proper destination.
+<li><b>Simplicity: </b>The routing should be done in a simple manner so that the overhead is as low as possible. With increasing complexity of the routing algorithms the overhead also increases.
+<li><b>Robustness: </b>Once a major network becomes operative, it may be expected to run continuously for years without any failures. The algorithms designed for routing should be robust enough to handle hardware and software failures and should be able to cope with changes in the topology and traffic without requiring all jobs in all hosts to be aborted and the network rebooted every time some router goes down.
+<li><b>Stability: </b>The routing algorithms should be stable under all possible circumstances.
+<li><b>Fairness: </b>Every node connected to the network should get a fair chance of transmitting their packets. This is generally done on a first come first serve basis.
+<li><b>Optimality: </b>The routing  algorithms should be optimal in terms of throughput and minimizing mean packet delays. Here there is a trade-off and one has to choose depending on his suitability.
+</ol>
+
+<h3>Classification of Routing Algorithms</h3>
+The routing algorithms may be classified as follows: 
+<ol>
+<li><b>Adaptive Routing Algorithm: </b>These algorithms change their routing decisions to reflect changes in the topology and in traffic as well. These get their routing information from adjacent routers or from all routers. The optimization parameters are the distance, number of hops and estimated transit time. This can be further classified as follows:
+<ol>
+<li><b>Centralized: </b>In this type some central node in the network gets entire information about the network topology, about the traffic and about other nodes. This then transmits this information to the respective routers. The advantage of this is that only one node is required to keep the information. The disadvantage is that if the central node goes down the entire network is down, i.e. single point of failure.
+<li><b>Isolated: </b>In this method the node decides the routing without seeking information  from other nodes. The sending node does not know about the status of a particular link. The disadvantage is that the packet may be send through a congested route resulting in a delay. Some examples of this type of algorithm for routing are:
+<ul>
+<li><b>Hot Potato: </b>When a packet comes to a node, it tries to get rid of it as fast as it can, by putting it on the shortest output queue without regard to where that link leads. A variation of this algorithm is to combine static routing with the hot potato algorithm. When a packet arrives, the routing algorithm takes into account both the static weights of the links and the queue lengths.
+<li><b>Backward Learning: </b>In this method the routing tables at each node gets modified by information from the incoming packets. One way to implement backward learning is to include the identity of the source node in each packet, together with a hop counter that is incremented on each hop. When a node receives a packet in a particular line, it notes down the number of hops it has taken to reach it from the source node. If the previous value of hop count stored in the node is better than the current one then nothing is done but if the current value is better then the value is updated for future use. The problem with this is that when the best route goes down then it cannot recall the second best route to a particular node. Hence all the nodes have to forget the stored informations periodically and start all over again.
+</ul>
+<li><b>Distributed: </b>In this the node receives information from its neighbouring nodes and then takes the decision about which way to send the packet. The disadvantage is that if in between the the interval it receives information and sends the paket something changes then the packet may be delayed.
+</ol><p>
+<li><b>Non-Adaptive Routing Algorithm: </b>These algorithms do not base their routing decisions on measurements and estimates of the current traffic and topology. Instead the route to be taken in going from one node to the other is computed in advance, off-line, and downloaded to the routers when the network is booted. This is also known as static routing. This can be further classified as:
+<ol>
+<li><b>Flooding: </b>Flooding adapts the technique in which every incoming packet is sent on every outgoing line except the one on which it arrived. One problem with this method is that packets may go in a loop. As a result of this a node may receive several copies of a particular packet which is undesirable. Some techniques adapted to overcome these problems are as follows:
+<ul>
+<li><b>Sequence Numbers: </b>Every packet is given a sequence number. When a node receives the packet it sees its source address and sequence number. If the node finds that it has sent the same packet earlier then it will not transmit the packet and will just discard it.
+<li><b>Hop Count: </b>Every packet has a hop count associated with it. This is decremented(or incremented) by one by each node which sees it. When the hop count becomes zero(or a maximum possible value) the packet is dropped.
+<li><b>Spanning Tree: </b>The packet is sent only on those links that lead to the destination by constructing a spanning tree routed at the source. This avoids loops in transmission but is possible only when all the intermediate nodes have knowledge of the network topology.
+</ul>
+Flooding is not practical for general kinds of applications. But in cases where high degree of robustness is desired such as in military applications, flooding is of great help.
+<li><b>Random Walk: </b>In this method a packet is sent by the node to one of its neighbours randomly. This algorithm is highly robust. When the network is highly interconnected, this algorithm has the property of making excellent use of alternative routes. It is usually implemented by sending the packet onto the least queued link. 
+</ol>
+</ol>
+
+<h3>Delta Routing</h3>
+Delta routing is a hybrid of the centralized and isolated routing algorithms. Here each node computes the cost of each line (i.e some functions of the delay, queue length, utilization, bandwidth etc) and periodically sends a packet to the central node giving it these values which then computes the <b>k</b> best paths from node <b>i</b> to node <b>j</b>. Let <b>Cij1</b> be the cost of the best <b>i-j</b> path, <b>Cij2</b> the cost of the next best path and so on.If <b>Cijn - Cij1 < delta</b>, (<b>Cijn</b> - cost of <b>n'th</b>  best <b>i-j</b> path, <b>delta</b> is some constant) then path <b>n</b> is regarded equivalent to the best <b>i-j</b> path since their cost differ by so little. When <b>delta -> 0</b> this algorithm becomes centralized routing and when <b>delta -> infinity</b> all the paths become equivalent.
+
+<h3>Multipath Routing</h3>In the above algorithms it has been assumed that there is a single best path between any pair of nodes and that all traffic between them should use it. In many networks however there are several paths between pairs of nodes that are almost equally good. Sometimes in order to improve the performance multiple paths between single pair of nodes are used. This technique is called multipath routing or bifurcated routing. In this each node maintains a table with one row for each possible destination node. A row gives the best, second best, third best, etc outgoing line for that destination, together with a relative weight. Before forwarding a packet, the node generates a random number and then chooses among the alternatives, using the weights as probabilities. The tables are worked out manually and loaded into the nodes before the network is brought up and not changed thereafter.
+
+<h3>Hierarchical Routing</h3>
+In this method of routing the nodes are divided into regions based on hierarchy. A particular node can communicate with nodes at the same hierarchial level or the nodes at a lower level and directly under it. Here, the path from any source to a destination is fixed and is exactly one if the heirarchy is a tree.
+
+
+<HR color=BLACK>
+<A HREF="#top">back to top</A><br>
+<A HREF="lec10.html">Prev</A>|&nbsp<A HREF="lec12.html">Next </A>|
+<A HREF="index-2.html">Index</A>
+</P>
+</BODY>
+
+<!-- Mirrored from www.cse.iitk.ac.in/users/dheeraj/cs425/lec11.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 17 Sep 2022 16:16:29 GMT -->
+</HTML>

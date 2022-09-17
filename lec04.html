@@ -1,0 +1,296 @@
+<HTML>
+
+<!-- Mirrored from www.cse.iitk.ac.in/users/dheeraj/cs425/lec04.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 17 Sep 2022 16:16:16 GMT -->
+<HEAD>
+<TITLE>
+  Computer Networks: Lecture 04
+</TITLE>
+</HEAD>
+<a NAME="top"></A>
+<BODY TEXT="BLACK" BGCOLOR="#ffffff">
+<center>
+<h1>Computer Networks </h1>
+</center>
+
+<A HREF="lec03.html">Prev</a>|
+<A HREF="lec05.html">Next</A>|
+<A HREF="index-2.html">Index</A>
+
+<HR COLOR=black></HR>
+<h3>Multiplexing</h3>
+When two communicating nodes are connected through a media, it generally happens that bandwidth of media is several 
+times greater than that of the communicating nodes. Transfer of a single signal at a time is both slow and expensive. 
+The whole capacity of the link is not being utilized in this case. This link can be further exploited by sending 
+several signals combined into one. This combining of signals into one is called multiplexing.
+
+<ol>
+<li><b>Frequency Division Multiplexing (FDM): </b>This is possible in the case where transmission media has a bandwidth 
+than the required bandwidth of signals to be transmitted. A number of signals can be transmitted at the same time. 
+Each source is allotted a frequency range in which it can transfer it's signals, and a suitable frequency gap is 
+given between two adjescent signals to avoid overlapping. This is type of multiplexing is commonly seen in the cable 
+TV networks.
+<br>
+<center>
+<img src="fig.lec04/multip10.gif">
+</center>
+<BR>
+<li><b>Time Division Multiplexing (TDM): </b>This is possible when data transmission rate of the media is much higher 
+than that of the data rate of the source. Multiple signals can be transmitted if each signal is allowed to be 
+transmitted for a definite amount of time. These time slots are so small that all transmissions appear to be in parallel.
+<ol>
+<li><b>Synchronous TDM: </b>Time slots are preassigned and are fixed. Each source is given it's time slot at every 
+turn due to it. This turn may be once per cycle, or several turns per cycle ,if it has a high data transfer rate, or 
+may be once in a no. of cycles if it is slow. This slot is given even if the source is not ready with data. So this 
+slot is transmitted empty.
+<br>
+<center>
+<img src="fig.lec04/multip5.gif">
+</center>
+<BR>
+<li><b>Asynchronous TDM: </b> In this method, slots are not fixed. They are allotted dynamically depending on speed 
+of sources, and whether they are ready for transmission.
+<br>
+<center>
+<img src="fig.lec04/multip13.gif">
+</center>
+<BR>
+</ol>
+</ol>
+
+<h3>Network Topologies</h3>
+A network topology is the basic design of a computer network. It is very much like a map of a road. It details how key 
+network components such as nodes and links are interconnected. A network's topology is comparable to the blueprints of 
+a new home in which components such as the electrical system, heating and air conditioning system, and plumbing are 
+integrated into the overall design. 
+Taken from the Greek work "Topos" meaning "Place," Topology, in relation to networking, describes the configuration of 
+the network; including the location of the workstations and wiring connections. Basically it provides a definition of 
+the components of a Local Area Network (LAN). A topology, which is a pattern of interconnections among nodes, 
+influences a network's cost and performance. 
+There are three primary types of network topologies which refer to the physical and logical layout of the Network 
+cabling. They are: 
+<ol>
+<li><b>Star Topology: </b>All devices connected with a Star setup communicate through a central Hub by cable segments. 
+Signals are transmitted and received through the Hub. It is the simplest and the oldest and all the telephone switches 
+are based on this. In a star topology, each network device has a home run of cabling back to a network hub, giving each 
+device a separate connection to the network. So, there can be multiple connections in parallel.
+<br>
+<center>
+<img src="fig.lec04/star.gif">
+</center>
+<BR>
+<p><b>Advantages</b>
+<ul>
+<li>Network administration and error detection is easier because problem is isolated to central node 
+<li>Networks runs even if one host fails 
+<li>Expansion becomes easier and scalability of the network increases 
+<li>More suited for larger networks 
+</ul>
+
+<p><b>Disadvantages</b>
+<ul>
+<li>Broadcasting and multicasting is not easy because some extra functionality needs to be provided to the central hub 
+<li>If the central node fails, the whole network goes down; thus making the switch some kind of a bottleneck 
+<li>Installation costs are high because each node needs to be connected to the central switch 
+</ul>
+<p>
+<li><b>Bus Topology: </b>The simplest and one of the most common of all topologies, Bus consists of a single cable, 
+called a Backbone, that connects all workstations on the network using a single line. All transmissions must pass 
+through each of the connected devices to complete the desired request. Each workstation has its own individual signal 
+that identifies it and allows for the requested data to be returned to the correct originator. In the Bus Network, 
+messages are sent in both directions from a single point and are read by the node (computer or peripheral on the 
+network) identified by the code with the message. Most Local Area Networks (LANs) are Bus Networks because the 
+network will continue to function even if one computer is down. This topology works equally well for either peer to 
+peer or client server. 
+<br>
+<center>
+<img src="fig.lec04/bus.gif">
+</center>
+<BR>
+The purpose of the terminators at either end of the network is to stop the signal being reflected back. 
+<p><b>Advantages</b>
+<ul>
+<li>Broadcasting and multicasting is much simpler 
+<li>Network is redundant in the sense that failure of one node doesn't effect the network. The other part may still function properly 
+<li>Least expensive since less amount of cabling is required and no network switches are required 
+<li>Good for smaller networks not requiring higher speeds 
+</ul>
+<p><b>Disadvantages</b>
+<ul>
+<li>Trouble shooting and error detection becomes a problem because, logically, all nodes are equal 
+<li>Less secure because sniffing is easier 
+<li>Limited in size and speed 
+</ul>
+<p>
+<li><b>Ring Topology: </b>All the nodes in a Ring Network are connected in a closed circle of cable. Messages that are 
+transmitted travel around the ring until they reach the computer that they are addressed to, the signal being refreshed 
+by each node. In a ring topology, the network signal is passed through each network card of each device and passed on 
+to the next device. Each device processes and retransmits the signal, so it is capable of supporting many devices in a 
+somewhat slow but very orderly fashion. There is a very nice feature that everybody gets a chance to send a packet and 
+it is guaranteed that every node gets to send a packet in a finite amount of time. 
+<br>
+<center>
+<img src="fig.lec04/ring.gif">
+</center>
+<p><b>Advantages</b>
+<ul>
+<li>Broadcasting and multicasting is simple since you just need to send out one message 
+<li>Less expensive since less cable footage is required 
+<li>It is guaranteed that each host will be able to transmit within a finite time interval 
+<li>Very orderly network where every device has access to the token and the opportunity to transmit 
+<li>Performs better than a star network under heavy network load 
+</ul>
+<p><b>Disadvantages</b>
+<ul>
+<li>Failure of one node brings the whole network down 
+<li>Error detection and network administration becomes difficult 
+<li>Moves, adds and changes of devices can effect the network 
+<li>It is slower than star topology under normal load 
+</ul>
+</ol>
+<p>
+Generally, a BUS architecture is preferred over the other topologies - ofcourse, this is a very subjective opinion and 
+the final design depends on the requirements of the network more than anything else. Lately, most networks are shifting 
+towards the STAR topology. Ideally we would like to design networks, which physically resemble the STAR topology, but 
+behave like BUS or RING topology. 
+<HR color=BLACK>
+<center><h2>Data Link Layer</h2></center>
+Data link layer can be characterized by two types of layers:
+<ol>
+<li>Medium Access Layer (MAL) 
+<li>Logical Link Layer
+</ol>
+<h3>Aloha Protocols</h3>
+<h4>History</h4>
+The Aloha protocol was designed as part of a project at the University of Hawaii. It provided data transmission 
+between computers on several of the Hawaiian Islands using radio transmissions. 
+<ul>
+<li>Communications was typically between remote stations and a central sited named Menehune or vice versa. 
+<li>All message to the Menehune were sent using the same frequency. 
+<li>When it received a message intact, the Menehune would broadcast an ack on a distinct outgoing frequency. 
+<li>The outgoing frequency was also used for messages from the central site to remote computers. 
+<li>All stations listened for message on this second frequency. 
+</ul>
+
+<h4>Pure Aloha</h4>Pure Aloha is an unslotted, fully-decentralized protocol. It is extremely simple and trivial to 
+implement. The ground rule is - "when you want to talk, just talk!". So, a node which wants to transmits, will go 
+ahead and send the packet on its broadcast channel, with no consideration whatsoever as to anybody else is transmitting 
+or not. 
+<br>
+<center>
+<img src="fig.lec04/aloha14.gif">
+</center>
+<br>
+One serious drawback here is that, you dont know whether what you are sending has been received properly or not (so as 
+to say, "whether you've been heard and understood?"). To resolve this, in Pure Aloha, when one node finishes speaking, 
+it expects an acknowledgement in a finite amount of time - otherwise it simply retransmits the data. This scheme works 
+well in small networks where the load is not high. But in large, load intensive networks where many nodes may want to 
+transmit at the same time, this scheme fails miserably. This led to the development of Slotted Aloha.
+
+<h4>Slotted Aloha</h4>
+This is quite similar to Pure Aloha, differing only in the way transmissions take place. Instead of transmitting right 
+at demand time, the sender waits for some time. This delay is specified as follows - the timeline is divided into 
+equal slots and then it is required that transmission should take place only at slot boundaries. To be more precise, 
+the slotted-Aloha makes the following assumptions:
+<ul>
+<li>All frames consist of exactly L bits. 
+<li>Time is divided into slots of size L/R seconds (i.e., a slot equals the time to transmit one frame). 
+<li>Nodes start to transmit frames only at the beginnings of slots. 
+<li>The nodes are synchronized so that each node knows when the slots begin. 
+<li>If two or more frames collide in a slot, then all the nodes detect the collision event before the slot ends.
+</ul>
+<br>
+<center>
+<img src="fig.lec04/aloha15.gif">
+</center>
+<br>
+In this way, the number of collisions that can possibly take place is reduced by a huge margin. And hence, the 
+performance become much better compared to Pure Aloha. collisions may only take place with nodes that are ready to 
+speak at the same time. But nevertheless, this is a substantial reduction. 
+
+<h3>Carrier Sense Mutiple Access Protocols</h3>
+In both slotted and pure ALOHA, a node's decision to transmit is made independently of the activity of the other nodes 
+attached to the broadcast channel. In particular, a node neither pays attention to whether another node happens to be 
+transmitting when it begins to transmit, nor stops transmitting if another node begins to interfere with its 
+transmission. As humans, we have human protocols that allow allows us to not only behave with more civility, but also 
+to decrease the amount of time spent "colliding" with each other in conversation and consequently increasing the amount 
+of data we exchange in our conversations. Specifically, there are two important rules for polite human conversation:
+
+<ol>
+<li><b>Listen before speaking: </b>If someone else is speaking, wait until they are done. In the networking world, 
+this is termed carrier sensing - a node listens to the channel before transmitting. If a frame from another node is 
+currently being transmitted into the channel, a node then waits ("backs off") a random amount of time and then again 
+senses the channel. If the channel is sensed to be idle, the node then begins frame transmission. Otherwise, the node 
+waits another random amount of time and repeats this process. 
+<li><b>If someone else begins talking at the same time, stop talking.</b> In the networking world, this is termed 
+collision detection - a transmitting node listens to the channel while it is transmitting. If it detects that another 
+node is transmitting an interfering frame, it stops transmitting and uses some protocol to determine when it should 
+next attempt to transmit.
+</ol>
+
+It is evident that the end-to-end channel propagation delay of a broadcast channel - the time it takes for a signal to 
+propagate from one of the the channel to another - will play a crucial role in determining its performance. The longer 
+this propagation delay, the larger the chance that a carrier-sensing node is not yet able to sense a transmission that 
+has already begun at another node in the network.
+
+<h4>CSMA- Carrier Sense Multiple Access</h4>
+This is the simplest version CSMA protocol as described above. It does not specify any collision detection or handling. 
+So collisions might and WILL occur and clearly then, this is not a very good protocol for large, load intensive 
+networks. 
+<p>
+So, we need an improvement over CSMA - this led to the development of CSMA/CD. 
+
+<h4>CSMA/CD- CSMA with Collision Detection</h4>
+In this protocol, while transmitting the data, the sender simultaneously tries to receive it. So, as soon as it 
+detects a collission (it doesn't receive its own data) it stops transmitting. Thereafter, the node waits for some time 
+interval before attempting to transmit again. Simply put, <b>"listen while you talk"</b>. But, how long should one wait 
+for the carrier to be freed? There are three schemes to handle this: 
+
+<ol>
+<li><b>1-Persistent: </b>In this scheme, transmission proceeds immediately if the carrier is idle. However, if the carrier is 
+busy, then sender continues to sense the carrier until it becomes idle. The main problem here is that, if more than 
+one transmitters are ready to send, a collision is GUARANTEED!!
+
+<li><b>Non-Persistent: </b>In this scheme, the broadcast channel is not monitored continuously. The sender polls it at 
+random time intervals and transmits whenever the carrier is idle. This decreases the probability of collisions.
+But, it is not efficient in a low load situation, where number of collisions are anyway small. The problems it entails 
+are: 
+<ul>
+<li>If back-off time is too long, the idle time of carrier is wasted in some sense 
+<li>It may result in long access delays 
+</ul>
+<li><b>p-Persistent: </b>Even if a sender finds the carrier to be idle, it uses a probabilistic distribution to 
+determine whether to transmit or not. Put simply, "toss a coin to decide". If the carrier is idle, then transmission 
+takes place with a probability p and the sender waits with a probability 1-p. This scheme is a good trade off between 
+the Non-persistent and 1-persistent schemes. So, for low load situations, p is high (example: 1-persistent); and for 
+high load situations, p may be lower. Clearly, the value of p plays an important role in determining the performance 
+of this protocol. Also the same p is likely to provide different performance at different loads.
+</ol>
+
+CSMA/CD doesn't work in some wireless scenarios called <b>"hidden node"</b> problems. Consider a situation, where there are 3 
+nodes - A, B and C communicating with each other using a wireless protocol. Morover, B can communicate with both A and 
+C, but A and C lie outside each other's range and hence can't communicate directly with each other. Now, suppose both 
+A and C want to communicate with B simultaneously. They both will sense the carrier to be idle and hence will begin 
+transmission, and even if there is a collision, neither A nor C will ever detect it. B on the other hand will receive 
+2 packets at the same time and might not be able to understand either of them. To get around this problem, a better 
+version called CSMA/CA was developed, specially for wireless applications. 
+<HR color=BLACK>
+<h3>Image References:</h3>
+<ul>
+<li>http://williams.comp.ncat.edu/Networks/multip10.gif
+<li>http://williams.comp.ncat.edu/Networks/multip5.gif
+<li>http://williams.comp.ncat.edu/Networks/multip13.gif
+<li>http://www.e-networks.org/images/startopology.gif
+<li>http://www.delmar.edu/Courses/CIS306/Primer/primf05.gif
+<li>http://www.e-networks.org/images/ringtopology.gif
+<li>http://www.laynetworks.com/images/aloha14.gif
+<li>http://www.laynetworks.com/images/aloha15.gif
+</ul>
+<HR color=BLACK>
+<A HREF="#top">back to top</A><br>
+<A HREF="lec03.html">Prev</A>|&nbsp<A HREF="lec05.html">Next </A>|
+<A HREF="index-2.html">Index</A>
+</P>
+</BODY>
+
+<!-- Mirrored from www.cse.iitk.ac.in/users/dheeraj/cs425/lec04.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 17 Sep 2022 16:16:20 GMT -->
+</HTML>

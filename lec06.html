@@ -1,0 +1,370 @@
+<HTML>
+
+<!-- Mirrored from www.cse.iitk.ac.in/users/dheeraj/cs425/lec06.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 17 Sep 2022 16:16:21 GMT -->
+<HEAD>
+<TITLE>
+ Computer Networks: Lecture 06
+</TITLE>
+</HEAD>
+<a NAME="top"></A>
+<BODY TEXT="BLACK" BGCOLOR="#ffffff">
+<center>
+<h1>Computer Networks </h1>
+</center>
+
+<A HREF="lec05.html">Prev</a>|
+<A HREF="lec07.html">Next</A>|
+<A HREF="index-2.html">Index</A>
+
+<HR COLOR=black></HR>
+<center><h2>IEEE 802.3 and Ethernet</h2></center><p>
+<ul>
+<li>Very popular LAN standard. 
+<li>Ethernet and IEEE 802.3 are distinct standards but as they are very similar to one another these words are used interchangeably. 
+<li>A standard for a 1-persistent CSMA/CD LAN. 
+<li>It covers the physical layer and MAC sublayer protocol. 
+</ul>
+<h3>Ethernet Physical Layer</h3>
+A Comparison of Various Ethernet and IEEE 802.3 Physical-Layer Specifications <p>
+<table border="1" bordercolor="#800000" bordercolorlight="#800000" bordercolordark="#800000" height="169" width="982">
+
+<tr valign="TOP">
+     <th colspan="1" rowspan="2" height="38" width="177"><b>Characteristic</b></th>
+     <th colspan="1" rowspan="2" height="38" width="124"><b>Ethernet Value</b></th>
+     <th colspan="5" rowspan="1" height="19" width="634"><b>IEEE 802.3 Values</b></th>
+</tr>
+<tr valign="TOP">
+     <th align="LEFT" height="13" width="124"><b>10Base5</b></th>
+     <th align="LEFT" height="13" width="116"><b>10Base2</b></th>
+     <th align="LEFT" height="13" width="179"><b>10BaseT</b></th>
+     <th align="LEFT" height="13" width="85"><b>10BaseF</b></th>
+     <th align="LEFT" height="13" width="106"><b>10 Base -TX</b></th>
+     <th align="LEFT" height="13" width="245"><b>100BaseT4</b></th>
+</tr>
+<tr valign="TOP"><td align="LEFT" height="19" width="177">
+     <p>Data rate (Mbps)</p>
+     </td>
+     <td align="LEFT" height="19" width="124">
+     <p>10</p>
+     </td>
+     <td align="LEFT" height="19" width="124">
+     <p>10</p>
+     </td>
+     <td align="LEFT" height="19" width="116">
+     <p>10</p>
+     </td>
+     <td align="LEFT" height="19" width="179">
+     <p>10</p>
+     </td>
+     <td align="LEFT" height="19" width="85">
+     <p>10</p>
+     </td>
+     <td align="LEFT" height="19" width="106">
+     100
+     </td>
+     <td align="LEFT" height="19" width="245">
+     <p>100</p>
+     </td>
+</tr>
+<tr valign="TOP"><td align="LEFT" height="19" width="177">
+     <p>Signaling method</p>
+     </td>
+     <td align="LEFT" height="19" width="124">
+     <p>Baseband</p>
+     </td>
+     <td align="LEFT" height="19" width="124">
+     <p>Baseband</p>
+     </td>
+     <td align="LEFT" height="19" width="116">
+     <p>Baseband</p>
+     </td>
+     <td align="LEFT" height="19" width="179">
+     <p>Baseband</p>
+     </td>
+     <td align="LEFT" height="19" width="85">
+     <p>Baseband</p>
+     </td>
+     <td align="LEFT" height="19" width="106">
+     Baseband
+     </td>
+     <td align="LEFT" height="19" width="245">
+     <p>Baseband</p>
+     </td>
+</tr>
+<tr valign="TOP"><td align="left" nowrap height="19" width="177">
+     <p>Maximum segment length (m)</p>
+     </td>
+     <td align="LEFT" height="19" width="124">
+     <p>500</p>
+     </td>
+     <td align="LEFT" height="19" width="124">
+     <p>500</p>
+     </td>
+     <td align="LEFT" height="19" width="116">
+     <p>185</p>
+     </td>
+     <td align="LEFT" height="19" width="179">
+     <p>100</p>
+     </td>
+     <td align="LEFT" height="19" width="85">
+     <p>2,000</p>
+     </td>
+     <td align="LEFT" height="19" width="106">
+     100
+     </td>
+     <td align="LEFT" height="19" width="245">
+     <p>100</p>
+     </td>
+</tr>
+<tr valign="TOP"><td align="LEFT" height="19" width="177">
+     <p>Media</p>
+     </td>
+     <td align="left" nowrap height="19" width="124">
+     <p>50-ohm coax (thick)</p>
+     </td>
+     <td align="left" nowrap height="19" width="124">
+     <p>50-ohm coax (thick)</p>
+     </td>
+     <td align="left" nowrap height="19" width="116">
+     <p>50-ohm coax (thin)</p>
+     </td>
+     <td align="left" nowrap height="19" width="179">
+     <p>Unshielded twisted-pair cable</p>
+     </td>
+     <td align="LEFT" height="19" width="85">
+     <p>Fiber-optic</p>
+     </td>
+     <td align="left" nowrap height="19" width="106">
+     Cat 5 UTP
+     </td>
+     <td align="left" nowrap height="19" width="245">
+     <p>Unshielded twisted-pair cable</p>
+     </td>
+</tr>
+<tr valign="TOP"><td align="LEFT" height="19" width="177">
+     Nodes/segment
+     </td>
+     <td align="LEFT" height="19" width="124">
+     100
+     </td>
+     <td align="LEFT" height="19" width="124">
+     100
+     </td>
+     <td align="LEFT" height="19" width="116">
+     30
+     </td>
+     <td align="LEFT" height="19" width="179">
+     1024
+     </td>
+     <td align="left" nowrap height="19" width="85">
+     1024
+     </td>
+     <td align="LEFT" height="19" width="106">
+     </td>
+     <td align="LEFT" height="19" width="245">
+     </td>
+</tr>
+
+<tr valign="TOP"><td align="LEFT" height="19" width="177">
+     <p>Topology</p>
+     </td>
+     <td align="LEFT" height="19" width="124">
+     <p>Bus</p>
+     </td>
+     <td align="LEFT" height="19" width="124">
+     <p>Bus</p>
+     </td>
+     <td align="LEFT" height="19" width="116">
+     <p>Bus</p>
+     </td>
+     <td align="LEFT" height="19" width="179">
+     <p>Star</p>
+     </td>
+     <td align="left" nowrap height="19" width="85">
+     <p>Point-to-point</p>
+     </td>
+     <td align="LEFT" height="19" width="106">
+     Bus
+     </td>
+     <td align="LEFT" height="19" width="245">
+     <p>Bus</p>
+     </td>
+</tr>
+
+</table>
+
+<p>
+10Base5 means it operates at 10 Mbps, uses baseband signaling and can support segments of up to 500 meters. The 10Base5 cabling is popularly called the Thick Ethernet. Vampire taps are used for their connections where a pin is carefully forced halfway into the co-axial cable's core as shown in the figure below. The 10Base2 or Thin Ethernet bends easily and is connected using standard BNC connectors to form T junctions (shown in the figure below). In the 10Base-T scheme a different kind of wiring pattern is followed in which all stations have a twisted-pair cable running to a central hub (see below). The difference between the different physical connections is shown below:
+
+<br><center>
+<img src="fig.lec06/cabling.jpg"><br>
+<b>(a) 10Base5 (b)10Base2 (c)10Base-T</b>
+</center>
+<br>
+
+All 802.3 baseband systems use Manchester encoding , which is a way for receivers to unambiguously determine the start, end or middle of each bit without reference to an external clock. 
+
+There is a restriction on the minimum node spacing (segment length between two nodes) in 10Base5 and 10Base2 and that is 2.5 meter and 0.5 meter respectively. The reason is that if two nodes are closer than the specified limit then there will be very high current which may cause trouble in detection of signal at the receiver end. 
+
+Connections from station to cable of 10Base5 (i.e. Thick Ethernet) are generally made using vampire taps and to 10Base2 (i.e. Thin Ethernet) are made using industry standard BNC connectors to form T junctions. 
+
+To allow larger networks, multiple segments can be connected by repeaters as shown. 
+
+A repeater is a physical layer device. It receives, amplifies and retransmits signals in either direction. 
+
+<p><b>Note: </b>To connect multiple segments, amplifier is not used because amplifier also amplifies the noise in the signal, whereas repeater regenerates signal after removing the noise. 
+
+<H3><b>IEEE 802.3 Frame Structure</b></H3>
+</CENTER>
+<P>
+<CENTER>
+<TABLE BORDER=3 bordercolorlight="#800000" bordercolor="#800000" bordercolordark="#800000">
+<TR ALIGN=CENTER>
+<TH>Preamble<BR>(7 bytes)</TH>
+<TH>Start of Frame Delimiter<BR>(1 byte)</TH>
+<TH>Dest. Address<BR>(2/6 bytes)</TH>
+<TH>Source Address<BR>(2/6 bytes)</TH>
+<TH>Length<BR>(2 bytes)</TH>
+<TH>802.2 Header+Data<BR>(46-1500 bytes)</TH>
+<TH>Frame Checksum<BR>(4 bytes)</TH>
+</TR>
+</TABLE>
+</CENTER>
+<H4><I>A brief description of each of the fields</I></H4>
+<UL>
+<LI>
+<B>Preamble :</B>Each frame starts with a <u>preamble</u> of 7 bytes, each byte containing the bit pattern 10101010. Manchester encoding is employed here and this enables the receiver's clock to synchronize with the
+sender's and initialise itself.
+<LI>
+<B>Start of Frame Delimiter :</B>This field containing a byte sequence 10101011 denotes the start of the frame itself.
+<LI>
+<B>Dest. Address :</B>The standard allows 2-byte and 6-byte addresses. Note that the 2-byte addresses are always local addresses while the 6-byte ones can be local or global.
+<BR><BR>
+
+<I><B>2-Byte Address&nbsp;&nbsp;&nbsp; - Manually assigned address</B></I>
+<TABLE BORDER=2 bordercolor="#800000" bordercolordark="#800000" bordercolorlight="#800000">
+<TR ALIGN=CENTER>
+<TH>Individual(0)/Group(1)<BR>(1 bit)</TH>
+<TH>Address of the machine<BR>(15 bits)</TH>
+</TR>
+</TABLE>
+<br>
+<I><B>6-Byte Address&nbsp;&nbsp;&nbsp; - Every Ethernet card with globally
+unique address</B></I>
+<TABLE BORDER=2 bordercolor="#800000" bordercolorlight="#800000" bordercolordark="#800000">
+<TR ALIGN=CENTER>
+<TH>Individual(0)/Group(1)<BR>(1 bit)</TH>
+<TH>Universal(0)/Local(1)<BR>(1 bit)</TH>
+<TH>Address of the machine<BR>(46 bits)</TH>
+</TR>
+</TABLE>
+<BR>
+<b>Multicast :</b> Sending to group of stations. This is ensured by setting the first bit in either 2-byte/6-byte addresses to 1.
+<BR>
+<b>Broadcast :</b> Sending to all stations. This can be done by setting all bits in the address field to 1.All
+Ethernet cards(Nodes) are a member of this group.
+<p>
+
+<LI>
+<B>Source Address :</B>Refer to Dest. Address. Same holds true over here. 
+
+<LI>
+<B>Length :</B> The <u>Length</u> field tells how many bytes are present in the data field, from a minimum of 0 to a maximum of 1500.
+The Data and padding together can be from 46bytes to 1500 bytes as the valid frames must be
+at least 64 bytes long, thus if data is less than 46 bytes the amount of padding
+can be found out by length field. 
+
+<LI>
+<B>Data :</B>Actually this field can be split up into two parts - Data(0-1500 bytes) and Padding(0-46 bytes).
+<BR>
+<i>Reasons for having a minimum length frame :</i>
+<ol>
+<li>To prevent a station from completing the transmission of a short frame before the first bit has even reached the far end of the cable, where it may collide with another frame. Note that the transmission time ought to be greater than twice the propagation time between two farthest nodes.
+<center>
+<b>transmission time for frame > 2*propagation time between two farthest nodes</b>
+</center>
+<li>When a transceiver detects a collision, it truncates the current frame, which implies that stray bits and pieces of frames appear on the cable all the time. Hence to distinguish between valid frames from garbage, 802.3 states that the minimum length of valid frames ought to be 64
+  bytes (from Dest. Address to Frame Checksum).
+</ol>
+<li>
+<B>Frame Checksum :</B> It is a 32-bit hash code of the data. If some bits are erroneously received by the
+destination (due to noise on the cable), the checksum computed by the destination wouldn't match with the checksum sent and therefore the error will be detected. The checksum algorithm is a cyclic redundancy checksum (CRC) kind. The checksum includes the packet from Dest. Address to Data field.
+</ul>
+<p>
+<H3><b>Ethernet Frame Structure</b></H3>
+<P>
+<CENTER>
+<TABLE BORDER=2 bordercolor="#800000" bordercolordark="#800000" bordercolorlight="#800000">
+<TR ALIGN=CENTER>
+<TH>Preamble<BR>(8 bytes)</TH>
+<TH>Dest. Address<BR>(2/6 bytes)</TH>
+<TH>Source Address<BR>(2/6 bytes)</TH>
+<TH>Type<BR>(2 bytes)</TH>
+<TH>Data<BR>(46-1500 bytes)</TH>
+<TH>Frame Checksum<BR>(4 bytes)</TH>
+</TR>
+</TABLE>
+</CENTER>
+<H4><I>A brief description of the fields which differ from IEEE 802.3</I></H4>
+<UL>
+<LI>
+<B>Preamble :</B>The <i>Preamble</i> and <i>Start of Frame Delimiter</i> are merged into one in Ethernet standard. However, the contents of the first 8 bytes remains the same in both.
+<li>
+<B>Type :</B>The length field of IEEE 802.3 is replaced by <u>Type</u> field, which denotes the type of packet being sent viz. IP, ARP, RARP, etc.
+If the field indicates a value less than 1500 bytes then it is length field of
+802.3 else it is the type field of Ethernet packet.
+</ul>
+
+<p>
+<h3>Truncated Binary Exponential Back off</h3>
+In case of collision the node transmitting backs off by a random number of
+slots , each slot time being equal to transmission time of 512
+bits (64 Byte- minimum size of a packet) in the following fashion:</p>
+<p><b><u><font color="#800000">No of Collision&nbsp;&nbsp;</font></u></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<font color="#800000"><b><u>Random No of slots</u></b></font></p>
+<p>1st&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+0-1</p>
+<p>2nd&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+0-3</p>
+<p>3rd&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+0-7</p>
+<p>|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|</p>
+<p>|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|</p>
+<p>10th&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+0-1023</p>
+<p>---------------------------------------------</p>
+<p>11th&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+0-1023</p>
+<p>12th&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+0-1023</p>
+<p>|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|</p>
+<p>16th&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+0-1023</p>
+<p>In general after i collisions a random number between 0-2^i-1 is chosen , and
+that number of slots is skipped. However, after 10 collisions have been reached
+the randomization interval is frozen at maximum of 1023 slots. After 16
+collisions the controller reports failure back to the computer.</p>
+
+<h3>5-4-3 Rule</h3>
+Each version of 802.3 has a maximum cable length per segment because long propagation time leads to difficulty in collision detection. To compensate for this
+the transmission time has to be increased which can be achieved by slowing down the transmission rate or increasing the packet size, neither of which is
+desirable. Hence to allow for large networks, multiple cables are connected via <b>repeaters</b>. Between any two nodes on an Ethernet network, there can be at most five segments, four repeaters and three populated segments (non-populated segments are those which do not have any machine connected between the two repeaters). This is known as the <b>5-4-3 Rule</b>.
+</ul>
+
+<HR color=BLACK>
+<h3>Image References:</h3>
+<ul>
+<li>http://homepages.ius.edu/rwisman/b438/Html/4-14.jpg
+</ul>
+<HR color=BLACK>
+<A HREF="#top">back to top</A><br>
+<A HREF="lec05.html">Prev</A>|&nbsp<A HREF="lec07.html">Next </A>|
+<A HREF="index-2.html">Index</A>
+</P>
+</BODY>
+
+<!-- Mirrored from www.cse.iitk.ac.in/users/dheeraj/cs425/lec06.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 17 Sep 2022 16:16:22 GMT -->
+</HTML>

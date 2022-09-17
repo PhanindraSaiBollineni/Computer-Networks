@@ -1,0 +1,421 @@
+<html>
+
+<!-- Mirrored from www.cse.iitk.ac.in/users/dheeraj/cs425/lec32.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 17 Sep 2022 16:16:47 GMT -->
+<head>
+<title>
+Computer Networks : Lecture 32
+</title>
+</head>
+<body>
+<a NAME="top"></A>
+<body text ="BLACK">
+<center>
+<h1>Computer Networks</h1>
+</center>
+
+<A HREF="lec31.html">Prev</a>&nbsp;|
+<A HREF="lec33.html">Next</A>&nbsp;|
+<A HREF="index-2.html">Index</A>&nbsp;
+<HR COLOR=black></HR>
+<CENTER><h2>
+Wireless Networks</h2>
+</center>
+<h3>Introduction</h3>
+As the need of communication became more and more demanding, new
+technologies in the field of networks developed. One of them is the use
+of wireless networks. It is the transmission of data from source to
+destination without the use of wires as the physical media.
+<BR>
+<h3>Why to use Wireless?</h3>
+Three reasons may be stated for the over-growing use of wireless networks
+across the world:
+<OL>
+<LI>
+They are ubiquitous networks. As the do not require messy wires as a medium
+of communication, they can be used to connect far-off places.</LI>
+
+<LI>
+They are cheaper than wired networks specially in the case of long-distance
+communication.</LI>
+
+<LI>
+They are pretty effective and fast, especially with the modern advancements
+in this field.</LI>
+</OL>
+
+<h3>Some Terms and Technologies:</h3>
+
+<P><B> ATM-Asynchronous Transfer Mode:</FONT></U></B>
+<BR>ATM is a connection-oriented switching technology. It was built to
+support ISDN (Integrated Services Digital Network). ISDN required high
+speed cables for both its narrow band (64 Kbps) and broad band (155 Mbps)
+transmission. There were two technologies available for transmitting data-
+<OL>
+<LI>
+<B>Circuit Switching:</B> In this technology, when a user
+makes a call, the resources are reserved for him.&nbsp; The advantage of
+this technology is that it prevents collisions among various users. But
+the disadvantage is that it leads to inefficient utilization of bandwidth--
+if the user fails to send data or if the transmission speed is faster than
+the speed of sending data. then most of the bandwidth is wasted.</LI>
+
+<LI>
+<B>Packet Switching:</B> In this technology, resources are
+never reserved for any particular user. The advantage of this technology
+is that it leads to efficient utilization of bandwidth i.e. the channel
+is never free until &amp; unless there are no users, But the disadvantage
+is that it causes many collision.</LI>
+</OL>
+ATM was built as a combination of the best features of these two. Also
+ATM provides QoS (Quality of Service) based on the following priority pattern:
+<OL>
+<LI>
+<B>CBR-Constant Bit Rate:&nbsp</B>Jobs
+that can tolerate no delay are assigned the CBR priority.&nbsp; These jobs
+are provided same number of bits every frame..&nbsp;&nbsp; For example,
+viewing a video reel definitely requires some blocks in every frame.</LI>
+
+<LI>
+<B>VBR-Variable Bit Rate:&nbsp;</B>Jobs
+that may produce different sized packets at different times are assigned
+VBR priority. They are provided with a variable number of bits varying
+between&nbsp; a maximum and a minimum in different frames. e.g.. a document
+may be compressed differently by different machines. Transmitting it will
+be a variable transmission.</LI>
+
+<LI>
+<B>ABR-Available Bit Rate:&nbsp;</B>This is the
+same as VBR except that it has only the minimum fixed. If there are no
+CBR or VBR jobs left, it can use the entire frame,</LI>
+
+<LI>
+<B>UBR-Unavailable Bit Rate:&nbsp;</B>These
+jobs are the least priority jobs. The network does not promise anything
+but simply tries its best&nbsp; to transmit it.</LI>
+
+</OL>
+<B> WLAN-Wireless LAN</B>
+<BR>This is currently being used as dictated by the standards of IEEE 802.11.
+It can be installed at the medium access layer and the data transmission
+can occur using a converter to reach the wired LAN network.( IEEE 802.x)
+<BR>&nbsp;
+<BR><B> WATM-Wireless ATM </U></B>
+<BR>It is the wireless version of ATM.&nbsp; It provides QoS. It is not
+yet available in market. because installing it will require the simultaneous
+installation of ATM infrastructure. It is currently being tested thoroughly.
+
+<P><B> Coupling of Networks:</B>
+<BR>The alternatives are:
+<OL>
+<LI>
+WLAN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+LAN</LI>
+
+<LI>
+WATM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+LAN</LI>
+
+<LI>
+WLAN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ATM</LI>
+
+<LI>
+WATM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+ATM</LI>
+</OL>
+&nbsp;
+<OL>
+<LI>
+WLAN-LAN is the simplest of the above. According to the IEEE standards,
+the IEEE 802.11 (WLAN)&nbsp; can be used with IEEE 802.x (LAN) as follows:<IMG SRC="fig.lec32/6-layer.gif" HSPACE=20 VSPACE=20 BORDER=20 HEIGHT=80% WIDTH=80%></LI>
+
+<LI>
+WLAN-ATM- NOT FEASIBLE.</LI>
+
+<LI>
+WATM-LAN- NOT FEASIBLE because WATM requires an infrastructure of the type
+ATM</LI>
+
+<LI>
+WATM-ATM-this is also a simple scheme because WATM can run on ATM.</LI>
+</OL>
+<h3>Issues involved in Wireless Networks</h3>
+
+<UL>
+<LI>
+<B>Cost and Speed: </B>As it is being considered as an alternative to wired
+networks, it should be faster and cheaper.</LI>
+
+<LI>
+<B>Quality of Transmission:</B> It gives a higher BER (Bit Error Rate).
+The BER is greater than 10&nbsp; <SUP>-6.</SUP> This is caused because
+transmission quality depends highly on the physical media including landscape,
+weather etc.</LI>
+
+<LI>
+<B>RayLeigh Fading: </B>The data has to travel the distance through a medium
+like air. Several rays of the same stream cause Rayleigh fading due to
+interference. This causes poor transmission.</LI>
+
+<LI>
+<B>Multipath Propagation:</B> Similarly, due to multipath propagation,
+the signal received at the destination may be garbled.</LI>
+
+<LI>
+<B>Hand-Offs:</B> If hand-offs are used i.e., hexagonal cells each having
+a base station and many mobile terminals, two Mobile terminals that are
+far enough can use the same bandwidth. This reuse of bandwidth is helpful.</LI>
+
+<LI>
+<B>Dynamic Physical Characteristics: </B>The terminal may be mobile and
+constantly moving. Thus the distance between the base station and any active
+terminal may be constantly changing. This has to be taken into account
+while designing.</LI>
+
+<LI>
+<B>Practical Implementation</B>: The practical implementation of any wireless
+network requires CSMA/CD for proper transmission. The range of any terminal
+is fixed. So, there may be two terminals that are out of range of each
+other. These are called HIDDEN TERMINALS.</U> Collisions may be caused
+due to simultaneous sending of data from any two hidden terminals.&nbsp;
+The HIDDEN TERMINAL PROBLEM should be overcome with the help of Base Station.</LI>
+
+<LI>
+
+.<B>Mobility and Network Topologies:</B> Wireless networks should be effective
+enough to overcome the problems caused by the topology of the area and
+the mobility of the terminals</LI>
+
+<LI>
+<B>Frequency Allocation: Licensed &amp; Unlicensed:</B> For licensed networks,
+permission has to be taken from the authorities that grant you a fixed
+bandwidth which is not used by anybody else while unlicensed networking
+does not require any such permissions. It just provides with some unlicensed
+bands which can be used by anybody. Unlicensed bands may thus, cause collisions.</LI>
+
+<LI>
+<B>Capture Effect: </B>If there are more than one terminals requiring the
+attention of the Base Station, the one nearer to the base station may capture
+it. This unfair access to the base station should be prevented.</LI>
+
+<LI>
+<B>Power Requirements and Battery: </B>This problem arises for the Mobile
+Terminals that run battery or cells. Much dissipation of power&nbsp; is
+caused when switching from receiving mode to sending mode and vice versa.</LI>
+
+<LI>
+<B>Human Safety:</B> Not all bandwidths can be used . Also, the intensity
+should not be very high as it may lead to several complications in human
+body e.g.. cataract.</LI>
+</UL>
+
+<h3>Wireless Physical Media</h3>
+
+In the wireless physical media, three technologies are used:
+<OL>
+<LI>
+<B>Transmission at Infrared frequency: </B>This is easier to build and
+set-up. It is mainly used for indoor purposes because the beam has to be
+focussed and can't cross opaque media like walls etc.</LI>
+
+<LI>
+<B>Transmission through Microwave: </B>This is preferred as it requires
+low power consumption. (the bandwidth is fixed)&nbsp; But the basic problem
+is that it requires Line-of-Sight. Also, it requires license.</LI>
+
+<LI>
+<B>Transmission at Radio Frequency:&nbsp; </B>This is the one that is most
+familiar to us. The bandwidth is pretty large.</LI>
+
+</OL>
+
+<h3>Integrity and Security of the signal</h3>
+
+
+<P><B>Spread Spectrum:</FONT></U></B> To reduce
+the effect of noise signals, the bandwidth of the signal is increased tremendously.
+This is costly but assures better transmission. This is called SPREAD-SPECTRUM.
+This is used in two ways:
+<UL>
+<LI>
+<B>FHSS (Frequency hopping spread spectrum)</B>: The entire packet is not
+sent at the same bandwidth. Say, it is sent at frequency range A for&nbsp;
+time T1, frequency range B for time T2, A for T1, B for T2 and so on. The
+receiver also knows this sequence and so, looks at A for time T1, then
+at B for time T2 and so on. Thus this sort of understanding between the
+sender&nbsp;&nbsp; and receiver prevents the signal from being completely
+garbled .</LI>
+
+<LI>
+<B>DSSS (Direct Sequence Spread Spectrum): </B>This involves sending of
+coded data&nbsp; instead of the actual data. This code is known to the
+destination only which can decipher the data now.</LI>
+</UL>
+The problem still left undealt is that of bursty errors. If there&nbsp;
+is lot of traffic, interference may hinder&nbsp; the Base Station from&nbsp;
+receiving data for a burst of time. This is called <B>"Bursty Errors".</U></B>
+
+<BR>Such problem are looked at by <B>MAC</B>-Medium Access Control.
+
+<h3>MEDIUM ACCESS CONTROL</h3>
+To control the traffic, various techniques are used. MAC&nbsp; fulfills
+the following requirements:
+<OL>
+<LI>
+<B>QoS Requirements:&nbsp;</B>
+It provides Quality of Service according to the priority of jobs.</LI>
+
+<LI>
+
+<B>Error Control:&nbsp;</B>Error
+handling is done using some codes.</LI>
+
+<LI>
+<B>Frame Size:&nbsp;</B>To transmit
+maximum data, we want the frame-size to be maximum but at the same time,
+large frame-size highly increases the probability of errors. So, MAC provides
+a tradeoff between the above two factors determining the size of the frame.</LI>
+
+<LI>
+<B>Secure Transmission:&nbsp;</B>
+The data meant for a particular receiver is secured from others.</LI>
+
+<LI>
+<B>Reasonable Transmission:&nbsp;</B>
+If the number of users increases, each should get reasonable service. MAC
+prevents unfair access to channel.</LI>
+
+<LI>
+<B>Efficient utilization of Power:&nbsp;</B>
+If a transmitter is always on, it is continuously using power even if there
+is no data on the channel for it. This is reduced by sending the transmitter
+to "sleep mode" whenever the battery is going down. In this mode, the transmitter
+is unable to receive any data.</LI>
+</OL>
+
+<h3>Architecture for Wireless Network</h3>
+There are two types of architecture possible:
+<OL>
+<LI>
+<B>AD-HOC NETWORK</B></LI>
+
+<LI>
+<B>INFRASTRUCTURE NETWORK</B></LI>
+</OL>
+The Ad-Hoc network can be set up anytime. It does not require a Base Station.&nbsp;
+It is generally used for indoor purposes.
+<BR>The Infrastructure network involves Base Station and Mobile Terminals.
+It provides uplink facility&nbsp;&nbsp;&nbsp; ( link from MT to BS) and
+downlink facility (link from BS to MT).
+
+<h3>THE MAC PROTOCOL</h3>
+
+This protocol decides how to assign data slots to different users. The
+various policies it uses are:
+<OL>
+<LI>
+<B>Fixed Assignment Policy</B></LI>
+
+<LI>
+<B>Random Assignment Policy</B></LI>
+
+<LI>
+<B>Centrally Controlled Policy</B></LI>
+
+<LI>
+<B>Distributed Controlled Policy</B></LI>
+
+<LI>
+<B>Hybrid Controlled Policy</B></LI>
+</OL>
+<B> Fixed Assignment Policy:</FONT></U></B>
+<BR>&nbsp;In this policy, each terminal is assigned some sort of data slot
+to speak. It causes a fixed delay. It is done in 3 ways:
+<OL>
+<LI>
+<B>TDMA (TIME DIVISION MULTIPLE ACCESS) :&nbsp;</B> Each user is given
+a fixed time to speak., after which the chance goes to another user. This
+cycle continues indefinitely.<IMG SRC="fig.lec32/6-tdma.gif" HSPACE=20 VSPACE=20 BORDER=20 HEIGHT=50% WIDTH=50%></LI>
+
+<LI>
+<B>FDMA (FREQUENCY DIVISION MULTIPLE ACCESS):</B> Each user is given a
+fixed bandwidth in which he can speak at all times.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<IMG SRC="fig.lec32/6-fdma.gif" HSPACE=20 VSPACE=20 BORDER=20 HEIGHT=50% WIDTH=50%></LI>
+
+<LI>
+<B>CDMA (CODIVISION MULTIPLE ACCESS):</B> Each user is given different
+frequencies at different times. This ensures that each user gets a fair
+amount of channel each time.<IMG SRC="fig.lec32/6-cdma.gif" HSPACE=20 VSPACE=20 BORDER=20 HEIGHT=50% WIDTH=50%></LI>
+</OL>
+
+<P>Also, sometimes, statistical multiple access is used in which a slot
+is assigned to a user only if it has data to send.
+<BR>&nbsp;
+
+<P><B>Random Assignment Policy</FONT></U></B>
+
+<BR>In this&nbsp; policy, contention slots are provided to all the users.
+Problem may arise if the number of users increase drastically. The number
+of contention slots should be variable. This may cause some limiting of
+data slots but is necessary to prevent the derailment of the service .
+<BR>&nbsp;
+
+<P><B>Centrally Controlled Policy:</FONT></U></B>
+<BR>This is used in an infrastructure architecture.&nbsp; It involves the
+participation of a Base Station which may assign slots and priorities(CNBR,VBR
+etc.) to all the users.
+<BR>&nbsp;
+
+<P><B>Distributed Controlled Policy:</FONT></U></B>
+<BR>This is used in Ad-Hoc architecture. The control is among the terminals
+which decide among themselves about who is going to speak first.
+<BR>&nbsp;
+
+<P><B>Hybrid Controlled Policy:</FONT></U></B>
+<BR>This combines the best features of centrally controlled and distributed
+controlled policies.
+<BR>&nbsp;
+<h3>KINDS OF MAC PROTOCOLS:</h3>
+There are two kinds of Mac protocols:
+<OL>
+<LI>
+<B>FDD (Frequency Division Duplex) </B>This provides two separate bandwidths
+for uplink and downlink transmission. This leads to inefficient utilization
+of bandwidth as there is&nbsp; more&nbsp; traffic on downlink than uplink</LI>
+
+<LI>
+<B>TDD (Time Division Duplex)</B> This provides an adoptive boundary between
+the uplink and downlink frequency which depends on the what is being used
+at that particular time. It works as follows:</LI>
+</OL>
+
+Any mobile terminal can be in 3 states : empty state, request state and
+ready-to-transmit state.
+<OL>
+<LI>
+uplink-MT1 sends a random-access request to BS to communicate with MT2</LI>
+
+<LI>
+downlink: BS sends a b-bit access id to MT2</LI>
+<LI>
+uplink:&nbsp; MT1 sends the packet</LI>
+
+<LI>
+downlink: BS sends the packet to MT2</LI>
+</OL>
+The TDD is more in use now-a-days.
+
+
+<hr>
+<br>
+<A HREF="#top">back to top</A><br>
+
+<A HREF="lec31.html">Prev</A>|&nbsp<A HREF="lec33.html">Next </A>|
+<A HREF="index-2.html">Index</A>
+
+</P>
+</BODY>
+
+<!-- Mirrored from www.cse.iitk.ac.in/users/dheeraj/cs425/lec32.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 17 Sep 2022 16:16:49 GMT -->
+</HTML>

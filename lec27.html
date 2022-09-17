@@ -1,0 +1,170 @@
+<html>
+
+<!-- Mirrored from www.cse.iitk.ac.in/users/dheeraj/cs425/lec27.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 17 Sep 2022 16:16:44 GMT -->
+<head>
+<title>
+Computer Networks : Lecture 27
+</title>
+</head>
+<body>
+<a NAME="top"></A>
+<body text = "BLACK" BGCOLOR="#ffffff">
+<center>
+<h1>Computer Networks </h1>
+</center>
+
+<A HREF="lec26.html">Prev</a>&nbsp;|
+<A HREF="lec28.html">Next</A>&nbsp;|
+<A HREF="index-2.html">Index</A>&nbsp;
+<HR COLOR=black></HR>
+<CENTER><h2>
+Remote Procedure Call (Contd...)</h2>
+</center>
+We now look at the different ways of writing RPC programs. There are three levels at which RPC programs can be written:
+<ol>
+<li>On one extreme we can use some standard applications or programs provided by sun-RPC. For example, one can use the library function int rnusers (char *machinename ) for finding number of users logged onto a remote system. 
+<li>On the other hand we can use RPC run�time library : This has the maximum flexibility and efficiency. It has various functions like opening a connection, connecting to a port-mapper and other low level functions. Using this we can write our own stubs. This is however relatively difficult to use. 
+<li>The best approach is to use RPCgen : RPCgen stands for RPC generator. It generates client and server stubs. There are several details that cannot be easily controlled (for example, the number of retries in case of timeout). RPCgen takes as input a specification file which has a list of the procedures and arguments. It creates the client stub and server stub.
+</ol>
+
+<h3>Writing the Configuration File</h3>
+<dt>If we use <i>RPCgen</i>, then our work is essentially reduced to writing 
+    a specification file. This file has the procedure names, argument types, 
+    return types etc. Here we show a simple RPC specification file ( spec.x ) for 
+    printing a message on some other machine :</dt>
+    <dd>&nbsp;</dd>
+    <dt><i>program MESSAGEPROG {</i></dt>
+    <dt><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    version MESSAGEVERS {</i></dt>
+    <dd><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    int PRINTMESSAGE ( string ) = 1;</i></dd>
+    <dt><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    } = 1;</i></dt>
+    <dt><i>} = 99;</i></dt>
+    <dd>&nbsp;&nbsp;&nbsp; </dd>
+    <dt>We will have to do some changes on the server as well as client side. 
+    The server program ( msg_proc.c ) will look like this :</dt>
+    <dt>&nbsp;</dt>
+    <dt><i>#include &lt;stdio.h&gt;</i></dt>
+    <dt><i>#inculde &lt;rpc/rpc.h&gt;</i></dt>
+    <dt><i>#include &quot;msg.h&quot;</i></dt>
+    <dt><i>int *printmessage_1( msg )</i></dt>
+    <dt><i>char **msg;</i></dt>
+    <dt><i>{</i></dt>
+    <dt><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . . . . .</i></dt>
+    <dt><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; . . . . .</i></dt>
+    <dt><i>}</i></dt>
+    <dt>&nbsp;</dt>
+    <dt>On the client side the program ( client.c ) will look like </dt>
+  </dl>
+  <dl>
+    <dt><i>#include &lt;stdio.h&gt;</i></dt>
+    <dt><i>#inculde &lt;rpc/rpc.h&gt;</i></dt>
+    <dt><i>#include &quot;msg.h&quot;</i></dt>
+    <dt><i>main( int argc, char *argv[])</i></dt>
+    <dt><i>{</i></dt>
+    <dt><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    client *c1;</i></dt>
+    <dt><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    int *result;</i></dt>
+    <dt><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    char *server = argv[1];</i></dt>
+    <dt><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    char *message = argv[2];</i></dt>
+    <dt><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    if (( c1 = clnt_create( server, MESSAGEPROG, MESSAGEVERS, &quot;tcp&quot; )) == NULL</i></dt>
+    <dt><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    {</i></dt>
+    <dt><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    // error</i></dt>
+    <dt><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    }</i></dt>
+    <dt><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    result = printmessage_1( &amp;message, c1);</i></dt>
+    <dt><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    . . . . .</i></dt>
+    <dt><i>}</i></dt>
+  </dl>
+  <p><font size="+0"><font color="#000000">After creating the specification file 
+  we give the command </font><u><font color="#990000">$</u>rpcgen &nbsp; <u>spec.x</u></font><font color="#000000">&nbsp; 
+  ( where </font></font><font color="#000000" size="+0">spec.x is the name of 
+  the specification file ). The following files actions are taken and the files 
+  spec.h, spec_svc.c, spec_clnt.c get created :</font></p>
+  <p align="center">
+  <img border="0" src="fig.lec27/rpcgen.gif"> </p>
+  <dl>
+    
+    <dt>Once we have these files we write</dt>
+    <dt><font color="#800000">$cc msg_proc.c spec_svc.c</dt>
+    <dt>$cc client.c spec_clnt.c</dt>
+    <dd>&nbsp;</dd>
+    </font>
+    <dt>1<span style="font-style: normal; font-variant: normal; font-weight: normal">.</span><span style="FONT: 7pt 'Times New Roman'">&nbsp;
+    </span>When we start the server program it creates a socket and binds any 
+    local port to it. It then calls <i>svc_register, </i>to register the program 
+    number and version. This function contacts the port mapper to register 
+    itself.</dt>
+    <dt>2<span style="font-style: normal; font-variant: normal; font-weight: normal">.
+    </span><span style="FONT: 7pt 'Times New Roman'">&nbsp;</span>When the 
+    client program is started it calls <i>clnt_create</i>. This call specifies 
+    the name of the remote system, the program number, version number, and the 
+    protocol. This functions contacts the port mapper and finds the port for the 
+    server ( Sun RPC supports both TCP and UDP).</dt>
+    <dt>3.<span style="FONT: 7pt 'Times New Roman'">&nbsp; </span>The client now 
+    calls a remote procedure defined in the client stub. This stub sends the 
+    datagram/packet to the server, using the port number obtained in step two. 
+    The client waits for a response transmitting the requests a fixed number of 
+    times in case of a timeout. This datagram/packet is received by the server 
+    stub associated with the server program. The server stub executes the called 
+    procedure.&nbsp; When the function returns to the server stub it takes the return 
+    value, converts it to the XDR format and transmits it back to the client. 
+    The client stub receives the response, converts it as required and returns 
+    to the client program</dt>
+  </dl>
+  <h3>Authentication</h3>
+  <p>RPC defines several possible forms of authentication, including a simple 
+  authentication scheme that relies on UNIX and a more complex scheme that uses 
+  the <i><b>Data</b></i> <b><i>Encryption Standard (DES)</i></b>. </p>
+  <p>Authentication protocols can be of the following types: </p>
+  <ul>
+    <li><b>NULL Authentication -</b> In this case, no authentication is done. 
+    Neither the client cares about its identity nor the server cares who the 
+    client is. Example is a time server. </li>
+    <li><b>UNIX Style Authentication -</b> Unix authentication relies on the 
+    client machine to supply its hostname and the userid of the user making the 
+    request. The client also specifies its local time as a timestamp which can 
+    be used to sequence requests. The client also sends the main numeric group 
+    identifier of the group of which the user is a member and also the group 
+    identifiers of all the groups of which the user is a member. Based on this 
+    information, the server decides whether the client will be given permission 
+    to execute the procedure requested. This is a very weak form of security as 
+    the user and group identifiers are the same as UID and GID in the client's 
+    own machine, and anyone can send these information and see the data. This 
+    form of authentication is used in NFS. </li>
+    <li><b>Data Encryption Standard (DES) -</b> Here the client gives a password 
+    which is sent to the server in encrypted form. Encryption is done based on 
+    keys which are known only to the client and the server. This is indeed a 
+    powerful method of authentication. </li>
+    <li><b>SHORT -</b> This method is used for short form of authentication in 
+    messages after the first one. The client is authenticated only once during 
+    the initial handshake and a handle is given to the client. In future the 
+    client communicates with the server using the handle. It is difficult for 
+    another user to break in. This is not an entirely new style of 
+    authentication, and it can be used with any form of authentication. </li>
+  </ul>
+
+
+<hr>
+<h3>Image References</h3>
+<ul>
+<li>http://www.hlla.is.tsukuba.ac.jp/~yas/sie/pdsoft-2001/2002-01-10/images/rpcgen-files.gif
+</ul>
+<hr COLOR=black>
+<A HREF="#top">back to top</A><br>
+<A HREF="lec26.html">Prev</A>|&nbsp<A HREF="lec28.html">Next </A>|
+<A HREF="index-2.html">Index</A>
+</P>
+</BODY>
+
+<!-- Mirrored from www.cse.iitk.ac.in/users/dheeraj/cs425/lec27.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 17 Sep 2022 16:16:44 GMT -->
+</HTML>
